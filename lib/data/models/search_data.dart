@@ -3,7 +3,7 @@ enum TypeOfMovie{all,movies,series, episode}
 
 class SearchData{
   final String search;
-  final int? year;
+  final String? year;
   final TypeOfMovie type;
 
   SearchData({
@@ -12,7 +12,7 @@ class SearchData{
     this.type = TypeOfMovie.all
   });
 
-  SearchData copyWith({ String? search, int? year, TypeOfMovie? type }) =>
+  SearchData copyWith({ String? search, String? year, TypeOfMovie? type }) =>
       SearchData(search: search ?? "", year: year, type: type ?? TypeOfMovie.all);
 
 }

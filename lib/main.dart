@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:movie_info_searcher/data/models/searching_manager.dart';
 import 'package:movie_info_searcher/navigation/app_router.dart';
 import 'package:movie_info_searcher/navigation/app_state_manager.dart';
-import 'package:movie_info_searcher/ui/main_screen.dart';
 import 'package:movie_info_searcher/ui/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -19,11 +19,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _appManager = AppStateManager();
+  final _searchingManager = SearchingManager();
   late AppRouter _router;
 
   @override
   void initState() {
-    _router = AppRouter(appStateManager: _appManager);
+    _router = AppRouter(
+        appStateManager: _appManager,
+      searchingManager: _searchingManager);
     super.initState();
   }
 
@@ -32,6 +35,7 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => _appManager),
+        ChangeNotifierProvider(create: (context) => _searchingManager),
       ],
       child: MaterialApp(
         theme: MovieInfoSercherTheme.dark(),
