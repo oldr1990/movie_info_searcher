@@ -1,13 +1,13 @@
 
 import 'package:flutter/material.dart';
+import 'package:movie_info_searcher/data/models/DetailsData.dart';
 
-import 'omdbi_response.dart';
 
 class SearchingManager extends ChangeNotifier{
-  Search? _selectedMovie;
-  Search? get selectedMovie => _selectedMovie;
+  DetailsData? _selectedMovie;
+  DetailsData? get selectedMovie => _selectedMovie;
 
-  void selectMovie(Search movie){
+  void showMovieDetails(DetailsData movie){
     _selectedMovie = movie;
     notifyListeners();
   }

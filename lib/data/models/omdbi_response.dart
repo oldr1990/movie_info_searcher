@@ -1,23 +1,25 @@
 
-class Omdbi_response {
+import 'package:equatable/equatable.dart';
+
+class OmdbiResponse {
   List<Search> search;
   String totalResults;
   String response;
 
-  Omdbi_response({
+  OmdbiResponse({
     this.search = const [],
     this.totalResults = "",
     required this.response,
   });
 
-  factory Omdbi_response.fromJson(Map<String, dynamic> json) {
+  factory OmdbiResponse.fromJson(Map<String, dynamic> json) {
     final searchList = <Search>[];
     if (json['Search'] != null) {
       json['Search'].forEach((v) {
         searchList.add(Search.fromJson(v));
       });
     }
-    return Omdbi_response(
+    return OmdbiResponse(
         search: searchList,
         totalResults: json['totalResults'] ?? "",
         response: json['Response'] ?? "");

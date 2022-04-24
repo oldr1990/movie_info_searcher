@@ -26,9 +26,7 @@ class _DetailScreenState extends State<DetailScreen> {
        title: const Text("Movie Info Searcher"),
        elevation: 1,
      ),
-     body: Container(
-         child: Text("Movie Info Searcher")
-         ),
+     body: const Text("Movie Info Searcher"),
    );
   }
 }

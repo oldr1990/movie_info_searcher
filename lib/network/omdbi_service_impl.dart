@@ -11,9 +11,10 @@ class OmdbiService{
   Future getData(String url) async{
     final response = await get(Uri.parse(url));
     if (response.statusCode == 200) {
+      log(response.body);
       return response.body;
     } else {
-      print(response.statusCode);
+      log(response.statusCode.toString());
     }
   }
 
@@ -22,6 +23,11 @@ class OmdbiService{
     log("$baseUrl?apikey=$apiKey&s=$search&year=$year&type=$typeString");
     final movies = await getData("$baseUrl?apikey=$apiKey&s=$search&y=$year&type=$typeString");
     return movies;
+  }
+
+  Future<dynamic> getDetails(String id) async{
+    log("$baseUrl?apikey=$apiKey&i=$id");
+    return await getData("$baseUrl?apikey=$apiKey&i=$id");
   }
 
   String getType(TypeOfMovie? type){

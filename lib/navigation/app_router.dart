@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_info_searcher/data/models/searching_manager.dart';
-import 'package:movie_info_searcher/navigation/app_state_manager.dart';
+import 'package:movie_info_searcher/network/repotitory.dart';
 import 'package:movie_info_searcher/ui/details_screen.dart';
 import 'package:movie_info_searcher/ui/main_screen.dart';
 
@@ -8,20 +8,21 @@ class AppRouter extends RouterDelegate
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
   @override
   late final GlobalKey<NavigatorState> navigatorKey;
-  final AppStateManager appStateManager;
   final SearchingManager searchingManager;
+  final RepositoryImpl repositoryImpl;
 
   AppRouter({
-    required this.appStateManager,
-    required this.searchingManager})
+    required this.searchingManager,
+    required this.repositoryImpl})
       : navigatorKey = GlobalKey<NavigatorState>() {
     searchingManager.addListener(notifyListeners);
-    appStateManager.addListener(notifyListeners);
+    repositoryImpl.addListener(notifyListeners);
   }
 
   @override
   void dispose() {
-    appStateManager.removeListener(notifyListeners);
+    searchingManager.removeListener(notifyListeners);
+    repositoryImpl.removeListener(notifyListeners);
     super.dispose();
   }
 
@@ -32,7 +33,7 @@ class AppRouter extends RouterDelegate
       onPopPage: _handlePopPage,
       pages: [
         MainScreen.page(),
-        if (searchingManager.selectedMovie != null) DetailScreen.page(),
+        if (repositoryImpl.details.imdbID != null) DetailScreen.page(),
       ],
     );
   }

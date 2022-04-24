@@ -9,7 +9,7 @@ class Success<T> extends Result<T> {
 }
 
 class Error<T> extends Result<T> {
-  final Exception exception;
+  final String errorMessage;
 
-  Error(this.exception);
+  Error(this.errorMessage);
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_info_searcher/data/models/search_data.dart';
 import 'package:movie_info_searcher/ui/theme.dart';

@@ -1,17 +1,12 @@
-import 'dart:convert';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:movie_info_searcher/data/models/omdbi_response.dart';
-import 'package:movie_info_searcher/data/models/search_data.dart';
-import 'package:movie_info_searcher/data/models/searching_manager.dart';
-import 'package:movie_info_searcher/navigation/app_state_manager.dart';
 import 'package:movie_info_searcher/navigation/mis_pages.dart';
+import 'package:movie_info_searcher/network/repotitory.dart';
 import 'package:movie_info_searcher/ui/components/movie_card.dart';
 import 'package:movie_info_searcher/ui/components/searching_card.dart';
-import 'package:movie_info_searcher/network/omdbi_service_impl.dart';
+import 'package:movie_info_searcher/ui/main_screen_state.dart';
 import 'package:provider/provider.dart';
-
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -28,88 +23,70 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  SearchData? _searchData;
-  final List<Search> _listOfMovies = [];
-
-  @override
-  void didChangeDependencies(){
-    super.didChangeDependencies();
-    Provider.of<AppStateManager>(context,listen:false).goToPage(MovieInfoSearcherPage.search);
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Movie Info Searcher"),
-        elevation: 1,
-      ),
-      body: Container(
-          padding: const EdgeInsets.all(8),
-          child: ListView(scrollDirection: Axis.vertical, children: [
-            SearchingCard(
-              onSearch: (data) {
-               setState(() {
-                 _searchData = data;
-               });
-              },
-            ),
-            const SizedBox(
-              width: 16,
-              height: 16,
-            ),
-            buildMovieList((item) {
-              Provider.of<SearchingManager>(context,listen: false).selectMovie(item);
-            })
-          ])),
-    );
+    return Consumer<RepositoryImpl>(builder: (context, repository, child) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Movie Info Searcher"),
+          elevation: 1,
+        ),
+        body: Container(
+            padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+            child: ListView(scrollDirection: Axis.vertical, children: [
+              SearchingCard(
+                onSearch: (data) {
+                  FocusScope.of(context).unfocus();
+                  repository.getMovies(data);
+                },
+              ),
+              const SizedBox(
+                width: 16,
+                height: 16,
+              ),
+              buildMovieList((item) {
+                getDetails(item, repository);
+              }, repository.state),
+            ])),
+      );
+    });
   }
 
-  Widget buildMovieList( Function(Search) onItemTap) {
+  Widget buildMovieList(Function(String) onItemTap, MainScreenState state) {
     log('BuildMovieList');
-    if(_searchData == null){
-      return buildEmptyList();
+    log('State $state');
+    if (state is Loading) {
+      return const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    } else if (state is Error) {
+      return Center(
+        child: Text(
+          state.errorMessage ?? "Unknown Error!",
+          textAlign: TextAlign.center,
+          textScaleFactor: 1.3,
+        ),
+      );
+    } else if (state is DataLoaded) {
+      return buildList(state.data, onItemTap);
     } else {
-      return FutureBuilder<Omdbi_response>(
-          future: startSearching(_searchData!),
-          builder: (context, snapshot){
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                log(snapshot.error.toString());
-                return Center(
-                  child: Text(
-                    snapshot.error.toString(),
-                    textAlign: TextAlign.center,
-                    textScaleFactor: 1.3,
-                  ),
-                );
-              }
-              final data = snapshot.data;
-              if (data != null){
-                if(data.search.isNotEmpty){
-                  _listOfMovies.clear();
-                  _listOfMovies.addAll(data.search);
-                }
-              }
-              if(_listOfMovies.isNotEmpty){
-                return buildList(_listOfMovies, onItemTap);
-              } else {
-                return buildEmptyList();
-              }
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },);
+      return buildEmptyList();
     }
+  }
+
+  void getDetails(String id, RepositoryImpl repositoryImpl) async {
+    repositoryImpl.getDetails(id);
   }
 
   Widget buildEmptyList() {
     return Container();
   }
 
-  Widget buildList(List<Search> list, Function(Search) onItemTap) {
+  Widget buildList(List<Search> list, Function(String) onItemTap) {
     return ListView.separated(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
@@ -123,12 +100,5 @@ class _MainScreenState extends State<MainScreen> {
           );
         },
         itemCount: list.length);
-  }
-
-  Future<Omdbi_response> startSearching(SearchData searchData) async {
-    final json = await OmdbiService().searchMovies(
-        searchData.search, searchData.type, searchData.year);
-    final jsonMap = jsonDecode(json);
-    return Omdbi_response.fromJson(jsonMap);
   }
 }

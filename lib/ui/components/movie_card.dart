@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:movie_info_searcher/data/models/omdbi_response.dart';
 import 'package:movie_info_searcher/ui/theme.dart';
 
-Widget movieCard(Search item, Function(Search) onItemTap) {
+Widget movieCard(Search item, Function(String) onItemTap) {
   return GestureDetector(
-    onTap: ()=>{ onItemTap(item) },
+    onTap: ()=>{ onItemTap(item.imdbID) },
     child: Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0)
