@@ -29,7 +29,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+    
+  go_router: ^2.2.8
   google_fonts: 2.1.0
   flutter_colorpicker: ^0.6.0
   intl: ^0.17.0

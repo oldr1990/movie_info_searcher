@@ -1,28 +1,24 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:movie_info_searcher/data/models/DetailsData.dart';
 import 'package:movie_info_searcher/data/models/omdbi_response.dart';
-import 'package:movie_info_searcher/navigation/mis_pages.dart';
 import 'package:movie_info_searcher/network/repotitory.dart';
 import 'package:movie_info_searcher/ui/components/movie_card.dart';
 import 'package:movie_info_searcher/ui/components/searching_card.dart';
+import 'package:movie_info_searcher/ui/details_screen.dart';
 import 'package:movie_info_searcher/ui/main_screen_state.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
-
-  static MaterialPage page() {
-    return MaterialPage(
-        name: MovieInfoSearcherPages.search,
-        key: ValueKey(MovieInfoSearcherPages.search),
-        child: const MainScreen());
-  }
+  static const String route = "/main";
 
   @override
   State<StatefulWidget> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
+  bool isRedirected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +29,8 @@ class _MainScreenState extends State<MainScreen> {
           elevation: 1,
         ),
         body: Container(
-            padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
             child: ListView(scrollDirection: Axis.vertical, children: [
               SearchingCard(
                 onSearch: (data) {
@@ -79,7 +76,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void getDetails(String id, RepositoryImpl repositoryImpl) async {
-    repositoryImpl.getDetails(id);
+    DetailsData data = await repositoryImpl.getDetails(id);
+    Navigator.pushNamed(context, DetailScreen.route, arguments: data);
   }
 
   Widget buildEmptyList() {

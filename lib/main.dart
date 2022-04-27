@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:movie_info_searcher/data/models/searching_manager.dart';
-import 'package:movie_info_searcher/navigation/app_router.dart';
+import 'package:movie_info_searcher/data/models/DetailsData.dart';
 import 'package:movie_info_searcher/network/repotitory.dart';
+import 'package:movie_info_searcher/ui/details_screen.dart';
+import 'package:movie_info_searcher/ui/main_screen.dart';
 import 'package:movie_info_searcher/ui/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -12,40 +13,39 @@ void main() {
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   State<StatefulWidget> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  final _searchingManager = SearchingManager();
-  final _repository = RepositoryImpl();
-  late AppRouter _router;
-
   @override
   void initState() {
-    _router = AppRouter(
-        searchingManager: _searchingManager, repositoryImpl: _repository);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => _searchingManager),
-        ChangeNotifierProvider<RepositoryImpl>(
-          create: (context) => RepositoryImpl(),
-          lazy: false,
-        )
-      ],
-      child: MaterialApp(
+        providers: [
+          ChangeNotifierProvider<RepositoryImpl>(
+            create: (context) => RepositoryImpl(),
+            lazy: false,
+          )
+        ],
+        child: MaterialApp(
+          routes: {
+            MainScreen.route: (context) => const MainScreen(),
+          },
+          onGenerateRoute: (settings) {
+            if(settings.name == DetailScreen.route){
+              return MaterialPageRoute(builder: (context) {
+                return DetailScreen(data: settings.arguments as DetailsData);
+              });
+            }
+          },
           theme: MovieInfoSercherTheme.dark(),
           title: "Movie Info Searcher",
-          home: Router(
-            routerDelegate: _router,
-            backButtonDispatcher: RootBackButtonDispatcher(),
-          )),
-    );
+          home: const MainScreen(),
+        ));
   }
 }
