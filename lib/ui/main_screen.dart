@@ -8,6 +8,7 @@ import 'package:movie_info_searcher/ui/components/searching_card.dart';
 import 'package:movie_info_searcher/ui/details_screen.dart';
 import 'package:movie_info_searcher/ui/main_screen_state.dart';
 import 'package:provider/provider.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -76,7 +77,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void getDetails(String id, RepositoryImpl repositoryImpl) async {
+    context.loaderOverlay.show();
     DetailsData data = await repositoryImpl.getDetails(id);
+    context.loaderOverlay.hide();
     Navigator.pushNamed(context, DetailScreen.route, arguments: data);
   }
 

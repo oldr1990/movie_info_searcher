@@ -1,7 +1,6 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:movie_info_searcher/data/models/details_info_item_data.dart';
 import 'package:movie_info_searcher/ui/components/details_info_item.dart';
 import 'package:movie_info_searcher/ui/hero_tags.dart';
@@ -53,24 +52,27 @@ class DetailScreen extends StatelessWidget{
     if(list.isEmpty){
       return Container();
     } else {
-      return Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-        elevation: 4,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (context, index) {
-                return detailsInfoItem(list[index]);
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  height: 16,
-                );
-              },
-              itemCount: list.length),
+      return Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, index) {
+                  return detailsInfoItem(list[index]);
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(
+                    height: 16,
+                  );
+                },
+                itemCount: list.length),
+          ),
         ),
       );
     }

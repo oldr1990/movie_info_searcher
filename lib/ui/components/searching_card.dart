@@ -44,19 +44,22 @@ class _SearchingCardState extends State<SearchingCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      elevation: 8,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            buildSearchEditText(),
-            spacer(),
-            buildTypeChips(),
-            spacer(),
-            buildYearRow(),
-          ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        elevation: 8,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              buildSearchEditText(),
+              spacer(),
+              buildTypeChips(),
+              spacer(),
+              buildYearRow(),
+            ],
+          ),
         ),
       ),
     );
