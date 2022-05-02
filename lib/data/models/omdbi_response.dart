@@ -1,6 +1,4 @@
 
-import 'package:equatable/equatable.dart';
-
 class OmdbiResponse {
   List<Search> search;
   String totalResults;

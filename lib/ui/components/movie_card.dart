@@ -5,6 +5,8 @@ import 'package:movie_info_searcher/data/models/omdbi_response.dart';
 import 'package:movie_info_searcher/ui/hero_tags.dart';
 import 'package:movie_info_searcher/ui/theme.dart';
 
+import 'build_image.dart';
+
 Widget movieCard(Search item, Function(String) onItemTap) {
   return GestureDetector(
     onTap: () => {onItemTap(item.imdbID)},
@@ -16,12 +18,7 @@ Widget movieCard(Search item, Function(String) onItemTap) {
             borderRadius: BorderRadius.circular(8.0),
             child: Hero(
               tag: item.imdbID + HeroTags.poster,
-              child: CachedNetworkImage(
-                imageUrl: item.poster,
-                fit: BoxFit.fill,
-                width: 150,
-                height: 223,
-              ),
+              child: imageBuilder(item.poster, 150, 223),
             ),
           ),
           Expanded(

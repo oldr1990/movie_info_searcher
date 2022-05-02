@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_info_searcher/data/models/details_info_item_data.dart';
+import 'package:movie_info_searcher/ui/components/build_image.dart';
 import 'package:movie_info_searcher/ui/components/details_info_item.dart';
 import 'package:movie_info_searcher/ui/hero_tags.dart';
 import 'package:movie_info_searcher/ui/theme.dart';
@@ -43,12 +44,7 @@ class DetailScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
           child: Hero(
             tag: data.imdbID! + HeroTags.poster,
-            child: CachedNetworkImage(
-              imageUrl: url,
-              fit: BoxFit.fill,
-              width: 300,
-              height: 446,
-            ),
+            child: imageBuilder(url, 300, 446),
           ),
         ),
       ),
@@ -148,15 +144,18 @@ class DetailScreen extends StatelessWidget {
   Widget buildRatingCard() {
     if (data.ratings != null && data.ratings!.isNotEmpty) {
       Ratings imdb = data.ratings!.firstWhere((element) => element.source == "Internet Movie Database", orElse: () => Ratings());
-      return Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-        elevation: 4,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-               if (imdb.value != null )buildImdbRating(imdb),
-            ],
+      return Padding(
+        padding: const EdgeInsets.only(top:16.0),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                 if (imdb.value != null )buildImdbRating(imdb),
+              ],
+            ),
           ),
         ),
       );
