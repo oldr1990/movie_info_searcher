@@ -51,6 +51,7 @@ dependencies:
   sqlbrite: ^2.1.0
   moor_flutter: ^4.0.0
   http: ^0.13.3
+  loader_overlay: ^2.0.6
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:movie_info_searcher/data/models/DetailsData.dart';
 import 'package:movie_info_searcher/network/repotitory.dart';
 import 'package:movie_info_searcher/ui/details_screen.dart';
@@ -32,20 +33,22 @@ class _MyAppState extends State<MyApp> {
             lazy: false,
           )
         ],
-        child: MaterialApp(
-          routes: {
-            MainScreen.route: (context) => const MainScreen(),
-          },
-          onGenerateRoute: (settings) {
-            if(settings.name == DetailScreen.route){
-              return MaterialPageRoute(builder: (context) {
-                return DetailScreen(data: settings.arguments as DetailsData);
-              });
-            }
-          },
-          theme: MovieInfoSercherTheme.dark(),
-          title: "Movie Info Searcher",
-          home: const MainScreen(),
+        child: GlobalLoaderOverlay(
+          child: MaterialApp(
+            routes: {
+              MainScreen.route: (context) => const MainScreen(),
+            },
+            onGenerateRoute: (settings) {
+              if(settings.name == DetailScreen.route){
+                return MaterialPageRoute(builder: (context) {
+                  return DetailScreen(data: settings.arguments as DetailsData);
+                });
+              }
+            },
+            theme: MovieInfoSercherTheme.dark(),
+            title: "Movie Info Searcher",
+            home: const MainScreen(),
+          ),
         ));
   }
 }

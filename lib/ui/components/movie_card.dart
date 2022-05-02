@@ -2,25 +2,26 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_info_searcher/data/models/omdbi_response.dart';
+import 'package:movie_info_searcher/ui/hero_tags.dart';
 import 'package:movie_info_searcher/ui/theme.dart';
 
 Widget movieCard(Search item, Function(String) onItemTap) {
   return GestureDetector(
-    onTap: ()=>{ onItemTap(item.imdbID) },
+    onTap: () => {onItemTap(item.imdbID)},
     child: Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0)
-      ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         elevation: 8,
-        child: Row(
-            children: [
+        child: Row(children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
-            child: CachedNetworkImage(
-              imageUrl: item.poster,
-              fit: BoxFit.fill,
-              width: 150,
-              height: 223,
+            child: Hero(
+              tag: item.imdbID + HeroTags.poster,
+              child: CachedNetworkImage(
+                imageUrl: item.poster,
+                fit: BoxFit.fill,
+                width: 150,
+                height: 223,
+              ),
             ),
           ),
           Expanded(
@@ -31,21 +32,32 @@ Widget movieCard(Search item, Function(String) onItemTap) {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      Hero(
+                        tag: item.imdbID + HeroTags.title,
+                        child: Text(
                           item.title,
                           style: MovieInfoSercherTheme.darkTextTheme.headline2,
                           textAlign: TextAlign.center,
                         ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            item.year,
-                            style: MovieInfoSercherTheme.darkTextTheme.headline2,
+                          Hero(
+                            tag: item.imdbID + HeroTags.year,
+                            child: Text(
+                              item.year,
+                              style:
+                                  MovieInfoSercherTheme.darkTextTheme.headline2,
+                            ),
                           ),
-                          Text(
-                            item.type,
-                            style: MovieInfoSercherTheme.darkTextTheme.headline2,
+                          Hero(
+                            tag: item.imdbID + HeroTags.type,
+                            child: Text(
+                              item.type,
+                              style:
+                                  MovieInfoSercherTheme.darkTextTheme.headline2,
+                            ),
                           ),
                         ],
                       ),
