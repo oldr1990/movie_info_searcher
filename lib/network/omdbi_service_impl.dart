@@ -10,11 +10,15 @@ class OmdbiService{
 
   Future getData(String url) async{
     final response = await get(Uri.parse(url));
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 401) {
       log(response.body);
       return response.body;
     } else {
       log(response.statusCode.toString());
+      final map = <String, dynamic>{};
+      map['Response'] = "Error";
+      map['Error'] = "Unexpected error!";
+      return map;
     }
   }
 

@@ -55,25 +55,61 @@ class _MainScreenState extends State<MainScreen> {
     log('BuildMovieList');
     log('State $state');
     if (state is Loading) {
-      return const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      context.loaderOverlay.show();
+      return Container();
     } else if (state is Error) {
-      return Center(
-        child: Text(
-          state.errorMessage ?? "Unknown Error!",
-          textAlign: TextAlign.center,
-          textScaleFactor: 1.3,
-        ),
-      );
+      context.loaderOverlay.hide();
+      return buildError(state.errorMessage);
     } else if (state is DataLoaded) {
+      context.loaderOverlay.hide();
       return buildList(state.data, onItemTap);
     } else {
+      context.loaderOverlay.hide();
       return buildEmptyList();
     }
+  }
+
+  Widget buildError(String? message) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.error,
+            size: 100,
+            color: Colors.red,
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          const Text(
+            "Something went wrong...",
+            textAlign: TextAlign.center,
+            textScaleFactor: 1.3,
+            style: TextStyle(fontSize: 24, color: Colors.red),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          Text(
+            message ?? "Unknown Error!",
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 24, color: Colors.red),
+          ),
+        ],
+      ),
+    );
+  }
+
+  SnackBar getSnackBar(String? message) {
+    return SnackBar(
+        padding: const EdgeInsets.all(16),
+        content: Text(
+          message ?? "Unknown Error!",
+          textAlign: TextAlign.center,
+          textScaleFactor: 1.3,
+        ));
   }
 
   void getDetails(String id, RepositoryImpl repositoryImpl) async {

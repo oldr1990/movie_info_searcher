@@ -26,7 +26,8 @@ class DetailsData {
       String? imdbID, 
       String? type, 
       String? totalSeasons, 
-      String? response,}){
+      String? response,
+      String? error}){
     _title = title;
     _year = year;
     _rated = rated;
@@ -49,6 +50,7 @@ class DetailsData {
     _type = type;
     _totalSeasons = totalSeasons;
     _response = response;
+    _error = error;
 }
 
   DetailsData.fromJson(dynamic json) {
@@ -79,6 +81,7 @@ class DetailsData {
     _type = json['Type'];
     _totalSeasons = json['totalSeasons'];
     _response = json['Response'];
+    _error = json['Error'];
   }
 
   String? _title;
@@ -103,6 +106,7 @@ class DetailsData {
   String? _type;
   String? _totalSeasons;
   String? _response;
+  String? _error;
 
 DetailsData copyWith({  String? title,
   String? year,
@@ -126,6 +130,7 @@ DetailsData copyWith({  String? title,
   String? type,
   String? totalSeasons,
   String? response,
+  String? error,
 }) => DetailsData(  title: title ?? _title,
   year: year ?? _year,
   rated: rated ?? _rated,
@@ -148,6 +153,7 @@ DetailsData copyWith({  String? title,
   type: type ?? _type,
   totalSeasons: totalSeasons ?? _totalSeasons,
   response: response ?? _response,
+  error: error ?? _error,
 );
   String? get title => _title;
   String? get year => _year;
@@ -171,6 +177,7 @@ DetailsData copyWith({  String? title,
   String? get type => _type;
   String? get totalSeasons => _totalSeasons;
   String? get response => _response;
+  String? get error => _error;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -198,6 +205,7 @@ DetailsData copyWith({  String? title,
     map['Type'] = _type;
     map['totalSeasons'] = _totalSeasons;
     map['Response'] = _response;
+    map['Error'] = _error;
     return map;
   }
 

@@ -38,9 +38,14 @@ class RepositoryImpl extends Repository with ChangeNotifier {
     final json = await OmdbiService()
         .searchMovies(searchData.search, searchData.type, searchData.year);
     final jsonMap = jsonDecode(json);
-    list.clear();
-    list.addAll(OmdbiResponse.fromJson(jsonMap).search);
-    state = DataLoaded(list);
+    OmdbiResponse response = OmdbiResponse.fromJson(jsonMap);
+    if(response.error == null) {
+      list.clear();
+      list.addAll(response.search);
+      state = DataLoaded(list);
+    } else {
+      state = Error(response.error);
+    }
     notifyListeners();
   }
 

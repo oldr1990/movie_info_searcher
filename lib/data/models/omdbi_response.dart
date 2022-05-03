@@ -1,13 +1,15 @@
 
 class OmdbiResponse {
   List<Search> search;
-  String totalResults;
-  String response;
+  String? totalResults;
+  String? response;
+  String? error;
 
   OmdbiResponse({
     this.search = const [],
     this.totalResults = "",
     required this.response,
+    this.error,
   });
 
   factory OmdbiResponse.fromJson(Map<String, dynamic> json) {
@@ -20,7 +22,8 @@ class OmdbiResponse {
     return OmdbiResponse(
         search: searchList,
         totalResults: json['totalResults'] ?? "",
-        response: json['Response'] ?? "");
+        response: json['Response'] ?? "",
+        error: json['Error']);
   }
 }
 
