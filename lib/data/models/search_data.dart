@@ -1,18 +1,16 @@
+enum TypeOfMovie { all, movies, series, episode }
 
-enum TypeOfMovie{all,movies,series, episode}
-
-class SearchData{
+class SearchData {
   final String search;
   final String? year;
-  final TypeOfMovie type;
+  final TypeOfMovie? type;
+  final int? page;
 
   SearchData({
     required this.search,
     this.year,
-    this.type = TypeOfMovie.all
+    this.type = TypeOfMovie.all,
+    this.page,
   });
-
-  SearchData copyWith({ String? search, String? year, TypeOfMovie? type }) =>
-      SearchData(search: search ?? "", year: year, type: type ?? TypeOfMovie.all);
 
 }

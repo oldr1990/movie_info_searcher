@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:movie_info_searcher/data/models/DetailsData.dart';
 import 'package:movie_info_searcher/data/models/omdbi_response.dart';
+import 'package:movie_info_searcher/data/models/search_data.dart';
 import 'package:movie_info_searcher/network/repotitory.dart';
 import 'package:movie_info_searcher/ui/components/movie_card.dart';
 import 'package:movie_info_searcher/ui/components/searching_card.dart';
@@ -20,10 +22,38 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   bool isRedirected = false;
+  final PagingController<int, Search> _pagingController =
+      PagingController(firstPageKey: 0);
+
+  late RepositoryImpl _repositoryImpl;
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
+    super.initState();
+  }
+
+  Future _fetchPage(int key) async {
+    final page = await _repositoryImpl.loadMore();
+    if(key == 10){
+      _pagingController.appendLastPage(page);
+    } else{
+      _pagingController.appendPage(page, key+1);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<RepositoryImpl>(builder: (context, repository, child) {
+      _repositoryImpl = repository;
       return Scaffold(
         appBar: AppBar(
           title: const Text("Movie Info Searcher"),
@@ -36,33 +66,33 @@ class _MainScreenState extends State<MainScreen> {
               SearchingCard(
                 onSearch: (data) {
                   FocusScope.of(context).unfocus();
-                  repository.getMovies(data);
+                  _repositoryImpl.setSearchData(data);
+                  _pagingController.refresh();
                 },
-              ),
+              searchData: _repositoryImpl.currentSearchData,),
               const SizedBox(
                 width: 16,
                 height: 16,
               ),
               buildMovieList((item) {
-                getDetails(item, repository);
-              }, repository.state),
+                getDetails(item);
+              }),
             ])),
       );
     });
   }
 
-  Widget buildMovieList(Function(String) onItemTap, MainScreenState state) {
+  Widget buildMovieList(Function(String) onItemTap) {
+    final state = _repositoryImpl.state;
     log('BuildMovieList');
     log('State $state');
-    if (state is Loading) {
-      context.loaderOverlay.show();
-      return Container();
-    } else if (state is Error) {
+    if (state is Error) {
       context.loaderOverlay.hide();
-      return buildError(state.errorMessage);
-    } else if (state is DataLoaded) {
+      _pagingController.error = state.errorException;
+      return buildList(onItemTap);
+    } else if (state is SearchDataUpdated) {
       context.loaderOverlay.hide();
-      return buildList(state.data, onItemTap);
+      return buildList(onItemTap);
     } else {
       context.loaderOverlay.hide();
       return buildEmptyList();
@@ -112,9 +142,9 @@ class _MainScreenState extends State<MainScreen> {
         ));
   }
 
-  void getDetails(String id, RepositoryImpl repositoryImpl) async {
+  void getDetails(String id) async {
     context.loaderOverlay.show();
-    DetailsData data = await repositoryImpl.getDetails(id);
+    DetailsData data = await _repositoryImpl.getDetails(id);
     context.loaderOverlay.hide();
     Navigator.pushNamed(context, DetailScreen.route, arguments: data);
   }
@@ -123,19 +153,21 @@ class _MainScreenState extends State<MainScreen> {
     return Container();
   }
 
-  Widget buildList(List<Search> list, Function(String) onItemTap) {
-    return ListView.separated(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        itemBuilder: (context, index) {
-          return movieCard(list[index], onItemTap);
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            height: 16,
-          );
-        },
-        itemCount: list.length);
+  Widget buildList(Function(String) onItemTap) {
+    return PagedListView.separated(
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      physics: const NeverScrollableScrollPhysics(),
+      pagingController: _pagingController,
+      builderDelegate: PagedChildBuilderDelegate<Search>(
+        itemBuilder: (context, item, index) =>
+            movieCard(item, onItemTap),
+      ),
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          height: 16,
+        );
+      },
+    );
   }
 }
