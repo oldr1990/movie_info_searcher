@@ -144,6 +144,7 @@ class DetailScreen extends StatelessWidget {
   Widget buildRatingCard() {
     if (data.ratings != null && data.ratings!.isNotEmpty) {
       Ratings imdb = data.ratings!.firstWhere((element) => element.source == "Internet Movie Database", orElse: () => Ratings());
+      Ratings metacritic = data.ratings!.firstWhere((element) => element.source == "Metacritic", orElse: () => Ratings());
       return Padding(
         padding: const EdgeInsets.only(top:16.0),
         child: Card(
@@ -154,6 +155,7 @@ class DetailScreen extends StatelessWidget {
             child: Column(
               children: [
                  if (imdb.value != null )buildImdbRating(imdb),
+                if(metacritic != null) buildMetacriticRating(metacritic),
               ],
             ),
           ),
@@ -193,6 +195,60 @@ class DetailScreen extends StatelessWidget {
         )
       ],
     );
+  }
+
+  Widget buildMetacriticRating(Ratings rating){
+    int number = int.parse(rating.value!.split("/").first);
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+         Row(
+           crossAxisAlignment: CrossAxisAlignment.center,
+           children: [
+              const Image(
+                image: AssetImage('assets/images/metacritic.png'),
+                width: 32,
+                height: 32,
+                fit: BoxFit.scaleDown,
+             ),
+             Padding(
+               padding: const EdgeInsets.only(left: 4.0),
+               child: Text(
+                 "metacritic",
+                 style: MovieInfoSercherTheme.darkTextTheme.headline2,),
+             )
+           ],
+         ),
+          Card(
+            color: metacriticColor(number),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            child: Container(
+              width: 44,
+              height: 44,
+              child: Center(
+                child: Text(
+                  number.toString(),
+                  style: MovieInfoSercherTheme.darkTextTheme.headline2,
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Color metacriticColor(int rating){
+    if(rating < 40) {
+      return Colors.red;
+    } else if ( rating < 60) {
+      return Colors.orange;
+    } else {
+      return Colors.green;
+    }
   }
 
   bool notNull(String? value) {
