@@ -1,5 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_info_searcher/data/models/details_info_item_data.dart';
 import 'package:movie_info_searcher/ui/components/build_image.dart';
@@ -143,19 +141,28 @@ class DetailScreen extends StatelessWidget {
 
   Widget buildRatingCard() {
     if (data.ratings != null && data.ratings!.isNotEmpty) {
-      Ratings imdb = data.ratings!.firstWhere((element) => element.source == "Internet Movie Database", orElse: () => Ratings());
-      Ratings metacritic = data.ratings!.firstWhere((element) => element.source == "Metacritic", orElse: () => Ratings());
+      Ratings imdb = data.ratings!.firstWhere(
+          (element) => element.source == "Internet Movie Database",
+          orElse: () => Ratings());
+      Ratings metacritic = data.ratings!.firstWhere(
+          (element) => element.source == "Metacritic",
+          orElse: () => Ratings());
+      Ratings rotten = data.ratings!.firstWhere(
+          (element) => element.source == "Rotten Tomatoes",
+          orElse: () => Ratings());
       return Padding(
-        padding: const EdgeInsets.only(top:16.0),
+        padding: const EdgeInsets.only(top: 16.0),
         child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
           elevation: 4,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                 if (imdb.value != null )buildImdbRating(imdb),
-                if(metacritic != null) buildMetacriticRating(metacritic),
+                if (imdb.value != null) buildImdbRating(imdb),
+                if (metacritic.value != null) buildMetacriticRating(metacritic),
+                if (rotten.value != null) buildRottenRating(rotten),
               ],
             ),
           ),
@@ -166,7 +173,7 @@ class DetailScreen extends StatelessWidget {
     }
   }
 
-  Widget buildImdbRating(Ratings rating){
+  Widget buildImdbRating(Ratings rating) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -185,7 +192,11 @@ class DetailScreen extends StatelessWidget {
           children: [
             const Padding(
               padding: EdgeInsets.only(right: 4),
-              child: Icon(Icons.star, color: Colors.amber,size: 32,),
+              child: Icon(
+                Icons.star,
+                color: Colors.amber,
+                size: 32,
+              ),
             ),
             Text(
               rating.value!,
@@ -197,7 +208,44 @@ class DetailScreen extends StatelessWidget {
     );
   }
 
-  Widget buildMetacriticRating(Ratings rating){
+  Widget buildRottenRating(Ratings rating) {
+    int score = int.parse(rating.value!.replaceAll('%', ''));
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
+          child: Text(
+            "Rotten Tomatoes",
+            style: MovieInfoSercherTheme.darkTextTheme.headline6,
+          ),
+        ),
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Image(
+                  image: rottenImage(score),
+                width: 32,
+                height: 32,
+                fit: BoxFit.scaleDown,
+              ),
+            ),
+            Text(
+              rating.value!,
+              style: TextStyle(
+                color: rottenColor(score),
+                fontSize: 21.0,
+                fontWeight: FontWeight.w700,
+              ),
+            )
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget buildMetacriticRating(Ratings rating) {
     int number = int.parse(rating.value!.split("/").first);
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
@@ -205,26 +253,28 @@ class DetailScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-         Row(
-           crossAxisAlignment: CrossAxisAlignment.center,
-           children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
               const Image(
                 image: AssetImage('assets/images/metacritic.png'),
                 width: 32,
                 height: 32,
                 fit: BoxFit.scaleDown,
-             ),
-             Padding(
-               padding: const EdgeInsets.only(left: 4.0),
-               child: Text(
-                 "metacritic",
-                 style: MovieInfoSercherTheme.darkTextTheme.headline2,),
-             )
-           ],
-         ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 4.0),
+                child: Text(
+                  "metacritic",
+                  style: MovieInfoSercherTheme.darkTextTheme.headline2,
+                ),
+              )
+            ],
+          ),
           Card(
             color: metacriticColor(number),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             child: Container(
               width: 44,
               height: 44,
@@ -241,10 +291,10 @@ class DetailScreen extends StatelessWidget {
     );
   }
 
-  Color metacriticColor(int rating){
-    if(rating < 40) {
+  Color metacriticColor(int rating) {
+    if (rating < 40) {
       return Colors.red;
-    } else if ( rating < 60) {
+    } else if (rating < 60) {
       return Colors.orange;
     } else {
       return Colors.green;
@@ -253,5 +303,25 @@ class DetailScreen extends StatelessWidget {
 
   bool notNull(String? value) {
     return value != null && value != "N/A" && value.isNotEmpty;
+  }
+
+  AssetImage rottenImage(int score) {
+    if (score < 60) {
+      return const AssetImage('assets/images/rt_rotten.png');
+    } else if (score < 75) {
+      return const AssetImage('assets/images/rt_avarage.png');
+    } else {
+      return const AssetImage('assets/images/rt_best.png');
+    }
+  }
+
+  Color rottenColor(int rating) {
+    if (rating < 60) {
+      return Colors.red;
+    } else if (rating < 75) {
+      return Colors.orange;
+    } else {
+      return Colors.green;
+    }
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:movie_info_searcher/data/models/DetailsData.dart';
 import 'package:movie_info_searcher/data/models/omdbi_response.dart';
-import 'package:movie_info_searcher/data/models/search_data.dart';
 import 'package:movie_info_searcher/network/repotitory.dart';
 import 'package:movie_info_searcher/ui/components/movie_card.dart';
 import 'package:movie_info_searcher/ui/components/searching_card.dart';

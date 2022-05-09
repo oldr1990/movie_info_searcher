@@ -87,11 +87,9 @@ class RepositoryImpl extends Repository with ChangeNotifier {
 
   @override
   void setSearchData(SearchData searchData) {
-    if (isNotSameSearch(searchData)) {
       pages = 1;
       currentPage = 0;
       currentSearchData = searchData;
       state = SearchDataUpdated();
-    }
   }
 }

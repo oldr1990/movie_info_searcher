@@ -52,9 +52,9 @@ class MovieInfoSercherTheme {
       color: Colors.white,
     ),
     headline6: GoogleFonts.openSans(
-      fontSize: 20.0,
-      fontWeight: FontWeight.w600,
-      color: Colors.white,
+      fontSize: 21.0,
+      fontWeight: FontWeight.w700,
+      color: Colors.red.shade900,
     ),
   );
 
