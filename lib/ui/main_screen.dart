@@ -153,7 +153,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget buildList(Function(String) onItemTap) {
-    return PagedListView.separated(
+    return PagedListView(
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
       physics: const NeverScrollableScrollPhysics(),
@@ -162,11 +162,6 @@ class _MainScreenState extends State<MainScreen> {
         itemBuilder: (context, item, index) =>
             movieCard(item, onItemTap),
       ),
-      separatorBuilder: (context, index) {
-        return const SizedBox(
-          height: 16,
-        );
-      },
     );
   }
 }
