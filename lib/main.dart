@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:movie_info_searcher/data/models/DetailsData.dart';
 import 'package:movie_info_searcher/network/repotitory.dart';
 import 'package:movie_info_searcher/ui/details_screen.dart';
 import 'package:movie_info_searcher/ui/main_screen.dart';
+import 'package:movie_info_searcher/ui/searching/searching_screen.dart';
 import 'package:movie_info_searcher/ui/theme.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  BlocOverrides.runZoned(
+        () => runApp(const MyApp()),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -36,7 +40,8 @@ class _MyAppState extends State<MyApp> {
         child: GlobalLoaderOverlay(
           child: MaterialApp(
             routes: {
-              MainScreen.route: (context) => const MainScreen(),
+              SearchingScreen.route: (context) => const SearchingScreen(),
+             // MainScreen.route: (context) => const MainScreen(),
             },
             onGenerateRoute: (settings) {
               if(settings.name == DetailScreen.route){
@@ -47,7 +52,7 @@ class _MyAppState extends State<MyApp> {
             },
             theme: MovieInfoSercherTheme.dark(),
             title: "Movie Info Searcher",
-            home: const MainScreen(),
+            home: const SearchingScreen(),
           ),
         ));
   }

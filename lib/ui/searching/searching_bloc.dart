@@ -25,7 +25,7 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
         final loadedList = await _searchMovies();
         return emit(state.copyWith(
             status: SearchStatus.success,
-            list: state.list + loadedList,
+            list: loadedList,
             hasReachedMax: isEnd));
     } catch (e) {
       return emit(state.copyWith(status: SearchStatus.failure));
@@ -62,10 +62,10 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
 
   bool checkEnd(String pagesStr) {
     searchData = searchData.copyWith(page: searchData.page + 1);
-    int pages = int.tryParse(pagesStr) ?? 0;
-    pages = (pages / 10) as int;
-    if (pages % 10 != 0) pages++;
-    if (pages > 100) pages = 100;
+    int allMovies = int.tryParse(pagesStr) ?? 0;
+    int pages = allMovies ~/ 10;
+    if (allMovies % 10 != 0) pages++;
+    if (pages > 10) pages = 10;
     return pages <= searchData.page;
   }
 }
