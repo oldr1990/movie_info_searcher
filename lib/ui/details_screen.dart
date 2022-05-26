@@ -161,8 +161,8 @@ class DetailScreen extends StatelessWidget {
             child: Column(
               children: [
                 if (imdb.value != null) buildImdbRating(imdb),
-                if (metacritic.value != null) buildMetacriticRating(metacritic),
                 if (rotten.value != null) buildRottenRating(rotten),
+                if (metacritic.value != null) buildMetacriticRating(metacritic),
               ],
             ),
           ),
