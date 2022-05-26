@@ -5,7 +5,8 @@ import 'package:movie_info_searcher/ui/theme.dart';
 
 class SearchingCard extends StatefulWidget {
   final Function(SearchData) onSearch;
-  const SearchingCard({Key? key, required this.onSearch}) : super(key: key);
+  final SearchData searchData;
+  const SearchingCard({Key? key, required this.onSearch, required this.searchData}) : super(key: key);
 
   @override
   State<SearchingCard> createState() => _SearchingCardState();
@@ -21,6 +22,9 @@ class _SearchingCardState extends State<SearchingCard> {
   @override
   void initState() {
     super.initState();
+    _searchController.text = widget.searchData.search;
+    _yearController.text = widget.searchData.year ?? "";
+    _type = widget.searchData.type ?? TypeOfMovie.all;
     _yearController.addListener(() {
       if (_yearController.text.length == 4) {
         setState(() => _invalidYear = isYearNotValidated(_yearController.text));
