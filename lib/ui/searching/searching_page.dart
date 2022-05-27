@@ -17,7 +17,7 @@ class SearchingPage extends StatefulWidget {
 }
 
 class _SearchingPageState extends State<SearchingPage> {
-  bool isRedirected = false;
+  bool _showScrollUpButton = false;
   final _scrollController = ScrollController();
   final PagingController<int, Search> _pagingController =
       PagingController(firstPageKey: 0);
@@ -39,55 +39,69 @@ class _SearchingPageState extends State<SearchingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: ListView(
-        controller: _scrollController,
-        children: [
-          SearchingCard(
-            onSearch: (data) {
-              FocusScope.of(context).unfocus();
-              _pagingController.refresh();
-              context.read<SearchingBloc>().add(SearchInitial(data: data));
-            },
-            searchData: context.read<SearchingBloc>().searchData,
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-          BlocConsumer<SearchingBloc, SearchingState>(
-            buildWhen: (context, state) {
-              return state.status != SearchStatus.details &&
-                  state.status != SearchStatus.failure;
-            },
-            listenWhen: (context, state) {
-              return state.status == SearchStatus.details ||
-                  state.status == SearchStatus.failure;
-            },
-            listener: (context, state) {
-              context.loaderOverlay.hide();
-              if (state.status == SearchStatus.details) {
-                Navigator.pushNamed(context, DetailScreen.route,
-                    arguments: state.details);
-              } else if (state.status == SearchStatus.failure) {
-                showError(state.error);
-              }
-            },
-            builder: (context, state) {
-              if (state.status == SearchStatus.success) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Movie Info Searcher')),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ListView(
+          controller: _scrollController,
+          children: [
+            SearchingCard(
+              onSearch: (data) {
+                FocusScope.of(context).unfocus();
+                _pagingController.refresh();
+                context.read<SearchingBloc>().add(SearchInitial(data: data));
+              },
+              searchData: context.read<SearchingBloc>().searchData,
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            BlocConsumer<SearchingBloc, SearchingState>(
+              buildWhen: (context, state) {
+                return state.status != SearchStatus.details &&
+                    state.status != SearchStatus.failure;
+              },
+              listenWhen: (context, state) {
+                return state.status == SearchStatus.details ||
+                    state.status == SearchStatus.failure;
+              },
+              listener: (context, state) {
                 context.loaderOverlay.hide();
-                return buildList(state.list, state.hasReachedMax);
-              } else if (state.status == SearchStatus.loading) {
-                context.loaderOverlay.show();
-                return buildList(state.list, state.hasReachedMax);
-              } else {
-                context.loaderOverlay.hide();
-                return Container();
-              }
-            },
-          )
-        ],
+                if (state.status == SearchStatus.details) {
+                  Navigator.pushNamed(context, DetailScreen.route,
+                      arguments: state.details);
+                } else if (state.status == SearchStatus.failure) {
+                  showError(state.error);
+                }
+              },
+              builder: (context, state) {
+                if (state.status == SearchStatus.success) {
+                  context.loaderOverlay.hide();
+                  return buildList(state.list, state.hasReachedMax);
+                } else if (state.status == SearchStatus.loading) {
+                  context.loaderOverlay.show();
+                  return buildList(state.list, state.hasReachedMax);
+                } else {
+                  context.loaderOverlay.hide();
+                  return Container();
+                }
+              },
+            )
+          ],
+        ),
       ),
+      floatingActionButton: _showScrollUpButton
+          ? FloatingActionButton(
+              backgroundColor: Colors.grey[900],
+              onPressed: _scrollToTop,
+              child: const Icon(
+                Icons.arrow_upward_rounded,
+                color: Colors.white,
+                size: 36,
+              ),
+            )
+          : null,
     );
   }
 
@@ -110,6 +124,9 @@ class _SearchingPageState extends State<SearchingPage> {
 
   void _onScroll() {
     if (_isBottom) context.read<SearchingBloc>().add(SearchMore());
+    setState(() {
+      _showScrollUpButton = _scrollController.offset >= 400;
+    });
   }
 
   bool get _isBottom {
@@ -141,5 +158,10 @@ class _SearchingPageState extends State<SearchingPage> {
       backgroundColor: Colors.black38,
       duration: const Duration(seconds: 2),
     ));
+  }
+
+  void _scrollToTop() {
+    _scrollController.animateTo(0,
+        duration: const Duration(seconds: 2), curve: Curves.linear);
   }
 }
