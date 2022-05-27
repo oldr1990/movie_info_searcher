@@ -2,7 +2,7 @@
     package="com.example.movie_info_searcher">
    <application
         android:label="movie_info_searcher"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
