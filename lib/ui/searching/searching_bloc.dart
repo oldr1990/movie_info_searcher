@@ -10,13 +10,16 @@ import '../../data/models/search_data.dart';
 import '../../network/omdbi_service_impl.dart';
 import 'package:stream_transform/stream_transform.dart';
 
+import '../details_screen.dart';
+
 
 part 'searching_event.dart';
 
 part 'searching_state.dart';
 
 class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
-  SearchingBloc() : super(const SearchingState()) {
+  final BuildContext context;
+  SearchingBloc({required this.context}) : super(const SearchingState()) {
     on<SearchMore>(_onSearchMore, transformer: (events, mapper) {
       return events
           .debounce(const Duration(milliseconds: 300))
@@ -98,8 +101,8 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
     emit(state.copyWith(status: SearchStatus.loading));
     try {
       final details = await _searchDetails(event.movieId);
-      return emit(
-          state.copyWith(status: SearchStatus.details, details: details));
+      Navigator.pushNamed(context, DetailScreen.route, arguments: details);
+      emit(state.copyWith(status: SearchStatus.success));
     } catch (e) {
       return emit(
           state.copyWith(status: SearchStatus.failure, error: e.toString()));

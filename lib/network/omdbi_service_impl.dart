@@ -24,7 +24,7 @@ class OmdbiService {
   Future<dynamic> searchMovies(SearchData data) async {
     String typeString = getType(data.type);
     final request =
-        '$baseUrl?apikey=$apiKey&s=${data.search}&year=${data.year}&type=$typeString&page=${data.page.toString()}';
+        '$baseUrl?apikey=$apiKey&s=${data.search}&y=${data.year}&type=$typeString&page=${data.page.toString()}';
     log(request);
     final movies = await getData(request);
     return movies;

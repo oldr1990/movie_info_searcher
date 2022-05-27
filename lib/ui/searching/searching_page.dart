@@ -7,7 +7,6 @@ import 'package:movie_info_searcher/ui/searching/searching_bloc.dart';
 import '../../data/models/omdbi_response.dart';
 import '../components/movie_card.dart';
 import '../components/searching_card.dart';
-import '../details_screen.dart';
 
 class SearchingPage extends StatefulWidget {
   const SearchingPage({Key? key}) : super(key: key);
@@ -59,21 +58,14 @@ class _SearchingPageState extends State<SearchingPage> {
             ),
             BlocConsumer<SearchingBloc, SearchingState>(
               buildWhen: (context, state) {
-                return state.status != SearchStatus.details &&
-                    state.status != SearchStatus.failure;
+                return  state.status != SearchStatus.failure;
               },
               listenWhen: (context, state) {
-                return state.status == SearchStatus.details ||
-                    state.status == SearchStatus.failure;
+                return state.status == SearchStatus.failure;
               },
               listener: (context, state) {
                 context.loaderOverlay.hide();
-                if (state.status == SearchStatus.details) {
-                  Navigator.pushNamed(context, DetailScreen.route,
-                      arguments: state.details);
-                } else if (state.status == SearchStatus.failure) {
-                  showError(state.error);
-                }
+                showError(state.error);
               },
               builder: (context, state) {
                 if (state.status == SearchStatus.success) {
