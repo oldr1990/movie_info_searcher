@@ -10,12 +10,9 @@ class SearchingScreen extends StatelessWidget{
   static const String route = "/searching";
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Movie Info Searcher')),
-      body: BlocProvider(
+    return BlocProvider(
         create: (_) => SearchingBloc(),
         child: const SearchingPage(),
-      ),
-    );
+      );
   }
 }
