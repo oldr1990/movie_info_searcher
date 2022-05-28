@@ -11,7 +11,7 @@ class SearchingScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (_) => SearchingBloc(),
+        create: (_) => SearchingBloc(context: context),
         child: const SearchingPage(),
       );
   }

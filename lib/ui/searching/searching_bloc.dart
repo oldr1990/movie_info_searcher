@@ -4,11 +4,14 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:movie_info_searcher/network/model_response.dart';
 import '../../data/models/DetailsData.dart';
 import '../../data/models/omdbi_response.dart';
 import '../../data/models/search_data.dart';
 import '../../network/omdbi_service_impl.dart';
 import 'package:stream_transform/stream_transform.dart';
+
+import '../details_screen.dart';
 
 
 part 'searching_event.dart';
@@ -16,7 +19,8 @@ part 'searching_event.dart';
 part 'searching_state.dart';
 
 class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
-  SearchingBloc() : super(const SearchingState()) {
+  final BuildContext context;
+  SearchingBloc({required this.context}) : super(const SearchingState()) {
     on<SearchMore>(_onSearchMore, transformer: (events, mapper) {
       return events
           .debounce(const Duration(milliseconds: 300))
@@ -68,14 +72,18 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
   }
 
   Future<List<Search>> _searchMovies() async {
-    final json = await OmdbiService().searchMovies(searchData);
-    final jsonMap = jsonDecode(json);
+    final result = await OmdbiService().searchMovies(searchData);
+    if(result is Error<String>){
+      throw result.errorMessage;
+    }
+    result as Success<String>;
+    final jsonMap = jsonDecode(result.value);
     OmdbiResponse response = OmdbiResponse.fromJson(jsonMap);
     if (response.response == "True") {
       isEnd = checkEnd(response.totalResults!);
       return response.search;
     } else {
-      throw Exception(response.error ?? "Unexpected error.");
+      throw response.error ?? "Unexpected error.";
     }
   }
 
@@ -89,8 +97,17 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
   }
 
   Future<DetailsData> _searchDetails(String id) async {
-    final json = await OmdbiService().getDetails(id);
-    return DetailsData.fromJson(jsonDecode(json));
+    final result = await OmdbiService().getDetails(id);
+    if(result is Error<String>){
+      throw result.errorMessage;
+    }
+    result as Success<String>;
+    final details = DetailsData.fromJson(jsonDecode(result.value));
+    if (details.response == "True") {
+      return details;
+    } else {
+      throw details.error ?? "Unexpected error.";
+    }
   }
 
   FutureOr<void> _getDetails(
@@ -98,11 +115,11 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
     emit(state.copyWith(status: SearchStatus.loading));
     try {
       final details = await _searchDetails(event.movieId);
-      return emit(
-          state.copyWith(status: SearchStatus.details, details: details));
+      Navigator.pushNamed(context, DetailScreen.route, arguments: details);
+      emit(state.copyWith(status: SearchStatus.success));
     } catch (e) {
-      return emit(
-          state.copyWith(status: SearchStatus.failure, error: e.toString()));
+      emit(state.copyWith(status: SearchStatus.failure, error: e.toString()));
+      emit(state.copyWith(status: SearchStatus.success, hasReachedMax: true));
     }
   }
 }

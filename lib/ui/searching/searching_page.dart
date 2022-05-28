@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:movie_info_searcher/ui/searching/searching_bloc.dart';
 
 import '../../data/models/omdbi_response.dart';
 import '../components/movie_card.dart';
 import '../components/searching_card.dart';
-import '../details_screen.dart';
 
 class SearchingPage extends StatefulWidget {
   const SearchingPage({Key? key}) : super(key: key);
@@ -19,15 +17,12 @@ class SearchingPage extends StatefulWidget {
 class _SearchingPageState extends State<SearchingPage> {
   bool _showScrollUpButton = false;
   final _scrollController = ScrollController();
-  final PagingController<int, Search> _pagingController =
-      PagingController(firstPageKey: 0);
 
   @override
   void dispose() {
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
-    _pagingController.dispose();
     super.dispose();
   }
 
@@ -49,7 +44,6 @@ class _SearchingPageState extends State<SearchingPage> {
             SearchingCard(
               onSearch: (data) {
                 FocusScope.of(context).unfocus();
-                _pagingController.refresh();
                 context.read<SearchingBloc>().add(SearchInitial(data: data));
               },
               searchData: context.read<SearchingBloc>().searchData,
@@ -59,21 +53,14 @@ class _SearchingPageState extends State<SearchingPage> {
             ),
             BlocConsumer<SearchingBloc, SearchingState>(
               buildWhen: (context, state) {
-                return state.status != SearchStatus.details &&
-                    state.status != SearchStatus.failure;
+                return  state.status != SearchStatus.failure;
               },
               listenWhen: (context, state) {
-                return state.status == SearchStatus.details ||
-                    state.status == SearchStatus.failure;
+                return state.status == SearchStatus.failure;
               },
               listener: (context, state) {
                 context.loaderOverlay.hide();
-                if (state.status == SearchStatus.details) {
-                  Navigator.pushNamed(context, DetailScreen.route,
-                      arguments: state.details);
-                } else if (state.status == SearchStatus.failure) {
-                  showError(state.error);
-                }
+                showError(state.error);
               },
               builder: (context, state) {
                 if (state.status == SearchStatus.success) {
