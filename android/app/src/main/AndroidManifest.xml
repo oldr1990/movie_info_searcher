@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.movie_info_searcher">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="movie_info_searcher"
         android:icon="@mipmap/launcher_icon">

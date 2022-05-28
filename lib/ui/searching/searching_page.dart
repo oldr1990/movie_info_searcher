@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:movie_info_searcher/ui/searching/searching_bloc.dart';
 
@@ -18,15 +17,12 @@ class SearchingPage extends StatefulWidget {
 class _SearchingPageState extends State<SearchingPage> {
   bool _showScrollUpButton = false;
   final _scrollController = ScrollController();
-  final PagingController<int, Search> _pagingController =
-      PagingController(firstPageKey: 0);
 
   @override
   void dispose() {
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
-    _pagingController.dispose();
     super.dispose();
   }
 
@@ -48,7 +44,6 @@ class _SearchingPageState extends State<SearchingPage> {
             SearchingCard(
               onSearch: (data) {
                 FocusScope.of(context).unfocus();
-                _pagingController.refresh();
                 context.read<SearchingBloc>().add(SearchInitial(data: data));
               },
               searchData: context.read<SearchingBloc>().searchData,
