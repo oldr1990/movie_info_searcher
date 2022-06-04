@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:movie_info_searcher/network/model_response.dart';
 import '../../data/models/DetailsData.dart';
 import '../../data/models/omdbi_response.dart';
@@ -12,7 +11,6 @@ import '../../network/omdbi_service_impl.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import '../details_screen.dart';
-
 
 part 'searching_event.dart';
 
@@ -47,9 +45,9 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
           list: state.list + loadedList,
           hasReachedMax: isEnd));
     } catch (e) {
-       searchData = const SearchData();
-       emit(state.copyWith(status: SearchStatus.failure, error: e.toString()));
-       emit(state.copyWith(status: SearchStatus.success, hasReachedMax: true));
+      searchData = const SearchData();
+      emit(state.copyWith(status: SearchStatus.failure, error: e.toString()));
+      emit(state.copyWith(status: SearchStatus.success, hasReachedMax: true));
     }
   }
 
@@ -73,7 +71,7 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
 
   Future<List<Search>> _searchMovies() async {
     final result = await OmdbiService().searchMovies(searchData);
-    if(result is Error<String>){
+    if (result is Error<String>) {
       throw result.errorMessage;
     }
     result as Success<String>;
@@ -98,7 +96,7 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
 
   Future<DetailsData> _searchDetails(String id) async {
     final result = await OmdbiService().getDetails(id);
-    if(result is Error<String>){
+    if (result is Error<String>) {
       throw result.errorMessage;
     }
     result as Success<String>;
