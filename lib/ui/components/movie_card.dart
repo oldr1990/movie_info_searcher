@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_info_searcher/data/models/omdbi_response.dart';
 import 'package:movie_info_searcher/ui/hero_tags.dart';
@@ -10,9 +9,10 @@ Widget movieCard(Search item, Function(String) onItemTap) {
   return GestureDetector(
     onTap: () => {onItemTap(item.imdbID)},
     child: Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.only(bottom: 16.0, right: 16.0, left: 16),
       child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
           elevation: 8,
           child: Row(children: [
             ClipRRect(
@@ -34,7 +34,8 @@ Widget movieCard(Search item, Function(String) onItemTap) {
                           tag: item.imdbID + HeroTags.title,
                           child: Text(
                             item.title,
-                            style: MovieInfoSercherTheme.darkTextTheme.headline2,
+                            style:
+                                MovieInfoSercherTheme.darkTextTheme.headline2,
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -45,16 +46,16 @@ Widget movieCard(Search item, Function(String) onItemTap) {
                               tag: item.imdbID + HeroTags.year,
                               child: Text(
                                 item.year,
-                                style:
-                                    MovieInfoSercherTheme.darkTextTheme.headline2,
+                                style: MovieInfoSercherTheme
+                                    .darkTextTheme.headline2,
                               ),
                             ),
                             Hero(
                               tag: item.imdbID + HeroTags.type,
                               child: Text(
                                 item.type,
-                                style:
-                                    MovieInfoSercherTheme.darkTextTheme.headline2,
+                                style: MovieInfoSercherTheme
+                                    .darkTextTheme.headline2,
                               ),
                             ),
                           ],

@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.2"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,15 +30,11 @@ dependencies:
   flutter:
     sdk: flutter
     
-  go_router: ^2.2.8
   google_fonts: 2.1.0
-  flutter_colorpicker: ^0.6.0
   intl: ^0.17.0
   uuid: ^3.0.4
   cupertino_icons: ^1.0.3
   cached_network_image: ^3.1.0
-  flutter_slidable: ^0.6.0
-  flutter_svg: ^0.22.0
   shared_preferences: ^2.0.7
   json_annotation: ^4.1.0
   logging: ^1.0.1
@@ -63,7 +59,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
-  flutter_native_splash: ^2.0.1+1
   flutter_launcher_icons: "^0.9.2"
 
 flutter_icons:

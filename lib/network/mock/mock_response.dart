@@ -1,5 +1,4 @@
 
-import 'package:movie_info_searcher/data/models/omdbi_response.dart';
 
 String mockResponse = '{"Search":['
     '{"Title":"One Flew Over the Cuckoos Nest","Year":"1975","imdbID":"tt0073486","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BZjA0OWVhOTAtYWQxNi00YzNhLWI4ZjYtNjFjZTEyYjJlNDVlL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"},'

@@ -5,7 +5,7 @@ import 'package:movie_info_searcher/ui/components/details_info_item.dart';
 import 'package:movie_info_searcher/ui/hero_tags.dart';
 import 'package:movie_info_searcher/ui/theme.dart';
 
-import '../data/models/DetailsData.dart';
+import '../data/models/details_data.dart';
 
 class DetailScreen extends StatelessWidget {
   const DetailScreen({Key? key, required this.data}) : super(key: key);
@@ -275,7 +275,7 @@ class DetailScreen extends StatelessWidget {
             color: metacriticColor(number),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            child: Container(
+            child: SizedBox(
               width: 44,
               height: 44,
               child: Center(

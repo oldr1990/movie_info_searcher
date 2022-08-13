@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:movie_info_searcher/data/models/DetailsData.dart';
+import 'package:movie_info_searcher/data/models/details_data.dart';
 
 
 class SearchingManager extends ChangeNotifier{
