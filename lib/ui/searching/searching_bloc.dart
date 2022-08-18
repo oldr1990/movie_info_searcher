@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_info_searcher/network/model_response.dart';
-import '../../data/models/DetailsData.dart';
+import '../../data/models/details_data.dart';
 import '../../data/models/omdbi_response.dart';
 import '../../data/models/search_data.dart';
 import '../../network/omdbi_service_impl.dart';
@@ -45,9 +45,9 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
           list: state.list + loadedList,
           hasReachedMax: isEnd));
     } catch (e) {
-      searchData = const SearchData();
-      emit(state.copyWith(status: SearchStatus.failure, error: e.toString()));
-      emit(state.copyWith(status: SearchStatus.success, hasReachedMax: true));
+       searchData = const SearchData();
+       emit(state.copyWith(status: SearchStatus.failure, error: e.toString()));
+       emit(state.copyWith(status: SearchStatus.success, hasReachedMax: true));
     }
   }
 
@@ -65,7 +65,6 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
     } catch (e) {
       searchData = const SearchData();
       emit(state.copyWith(status: SearchStatus.failure, error: e.toString()));
-      emit(state.copyWith(status: SearchStatus.success, hasReachedMax: true));
     }
   }
 
@@ -117,7 +116,6 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
       emit(state.copyWith(status: SearchStatus.success));
     } catch (e) {
       emit(state.copyWith(status: SearchStatus.failure, error: e.toString()));
-      emit(state.copyWith(status: SearchStatus.success, hasReachedMax: true));
     }
   }
 }

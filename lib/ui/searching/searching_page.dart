@@ -8,6 +8,7 @@ import '../components/movie_card.dart';
 import '../components/searching_card.dart';
 
 class SearchingPage extends StatefulWidget {
+  static const String route = "/searching";
   const SearchingPage({Key? key}) : super(key: key);
 
   @override
@@ -36,48 +37,7 @@ class _SearchingPageState extends State<SearchingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Movie Info Searcher')),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: ListView(
-          controller: _scrollController,
-          children: [
-            SearchingCard(
-              onSearch: (data) {
-                FocusScope.of(context).unfocus();
-                context.read<SearchingBloc>().add(SearchInitial(data: data));
-              },
-              searchData: context.read<SearchingBloc>().searchData,
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            BlocConsumer<SearchingBloc, SearchingState>(
-              buildWhen: (context, state) {
-                return  state.status != SearchStatus.failure;
-              },
-              listenWhen: (context, state) {
-                return state.status == SearchStatus.failure;
-              },
-              listener: (context, state) {
-                context.loaderOverlay.hide();
-                showError(state.error);
-              },
-              builder: (context, state) {
-                if (state.status == SearchStatus.success) {
-                  context.loaderOverlay.hide();
-                  return buildList(state.list, state.hasReachedMax);
-                } else if (state.status == SearchStatus.loading) {
-                  context.loaderOverlay.show();
-                  return buildList(state.list, state.hasReachedMax);
-                } else {
-                  context.loaderOverlay.hide();
-                  return Container();
-                }
-              },
-            )
-          ],
-        ),
-      ),
+      body: _buildBody(),
       floatingActionButton: _showScrollUpButton
           ? FloatingActionButton(
               backgroundColor: Colors.grey[900],
@@ -94,16 +54,16 @@ class _SearchingPageState extends State<SearchingPage> {
 
   Widget buildList(List<Search> list, bool isEnd) {
     return ListView.builder(
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      physics: const NeverScrollableScrollPhysics(),
+      primary: false,
       itemBuilder: (BuildContext context, int index) {
         return index >= list.length
             ? buildBottomLoader()
-            : movieCard(list[index], (item) {
-                FocusScope.of(context).unfocus();
-                context.read<SearchingBloc>().add(GetDetails(movieId: item));
-              });
+            : Flexible(
+                child: movieCard(list[index], (item) {
+                  FocusScope.of(context).unfocus();
+                  context.read<SearchingBloc>().add(GetDetails(movieId: item));
+                }),
+              );
       },
       itemCount: isEnd || list.isEmpty ? list.length : list.length + 1,
     );
@@ -111,9 +71,12 @@ class _SearchingPageState extends State<SearchingPage> {
 
   void _onScroll() {
     if (_isBottom) context.read<SearchingBloc>().add(SearchMore());
-    setState(() {
-      _showScrollUpButton = _scrollController.offset >= 400;
-    });
+    bool isScrolled = _scrollController.offset >= 400;
+    if (isScrolled != _showScrollUpButton) {
+      setState(() {
+        _showScrollUpButton = isScrolled;
+      });
+    }
   }
 
   bool get _isBottom {
@@ -136,8 +99,10 @@ class _SearchingPageState extends State<SearchingPage> {
     );
   }
 
-  void showError(String? message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  void showError(BuildContext newContext, String? message) async {
+    //give time to build ui
+    await Future.delayed(const Duration(milliseconds: 10));
+    ScaffoldMessenger.of(newContext).showSnackBar(SnackBar(
       content: Text(
         message ?? "Unexpected Error",
         style: const TextStyle(color: Colors.white, fontSize: 20),
@@ -149,6 +114,45 @@ class _SearchingPageState extends State<SearchingPage> {
 
   void _scrollToTop() {
     _scrollController.animateTo(0,
-        duration: const Duration(seconds: 2), curve: Curves.linear);
+        duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
+  }
+
+  Widget _buildBody() {
+    return BlocBuilder<SearchingBloc, SearchingState>(
+      builder: (context, state) {
+        if (state.status == SearchStatus.loading) {
+          context.loaderOverlay.show();
+        } else {
+          context.loaderOverlay.hide();
+        }
+        if (state.status == SearchStatus.failure) {
+          showError(context, state.error);
+        }
+        return _buildMainList(state.list, state.hasReachedMax);
+      },
+    );
+  }
+
+  Widget _buildMainList(List<Search> list, bool isEnd) {
+    return ListView.builder(
+        controller: _scrollController,
+        itemCount: list.isEmpty ? 1 : list.length + (isEnd ? 0 : 1),
+        itemBuilder: ((context, index) {
+          if (index == 0) {
+            return SearchingCard(
+              onSearch: (data) {
+                FocusScope.of(context).unfocus();
+                context.read<SearchingBloc>().add(SearchInitial(data: data));
+              },
+              searchData: context.read<SearchingBloc>().searchData,
+            );
+          } else if (index < list.length) {
+            return movieCard(list[index], (item) {
+              FocusScope.of(context).unfocus();
+              context.read<SearchingBloc>().add(GetDetails(movieId: item));
+            });
+          }
+          return buildBottomLoader();
+        }));
   }
 }
