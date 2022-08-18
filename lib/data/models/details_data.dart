@@ -1,33 +1,35 @@
+// ignore: file_names
 import 'dart:convert';
-DetailsData detailsDataFromJson(String str) => DetailsData.fromJson(json.decode(str));
+
+DetailsData detailsDataFromJson(String str) =>
+    DetailsData.fromJson(json.decode(str));
 String detailsDataToJson(DetailsData data) => json.encode(data.toJson());
 
 class DetailsData {
-
-  DetailsData({
-      String? title, 
-      String? year, 
-      String? rated, 
-      String? released, 
-      String? runtime, 
-      String? genre, 
-      String? director, 
-      String? writer, 
-      String? actors, 
-      String? plot, 
-      String? language, 
-      String? country, 
-      String? awards, 
-      String? poster, 
-      List<Ratings>? ratings, 
-      String? metascore, 
-      String? imdbRating, 
-      String? imdbVotes, 
-      String? imdbID, 
-      String? type, 
-      String? totalSeasons, 
+  DetailsData(
+      {String? title,
+      String? year,
+      String? rated,
+      String? released,
+      String? runtime,
+      String? genre,
+      String? director,
+      String? writer,
+      String? actors,
+      String? plot,
+      String? language,
+      String? country,
+      String? awards,
+      String? poster,
+      List<Ratings>? ratings,
+      String? metascore,
+      String? imdbRating,
+      String? imdbVotes,
+      String? imdbID,
+      String? type,
+      String? totalSeasons,
       String? response,
-      String? error}){
+      String? error}) {
     _title = title;
     _year = year;
     _rated = rated;
@@ -51,7 +53,7 @@ class DetailsData {
     _totalSeasons = totalSeasons;
     _response = response;
     _error = error;
-}
+  }
 
   DetailsData.fromJson(dynamic json) {
     _title = json['Title'];
@@ -108,53 +110,56 @@ class DetailsData {
   String? _response;
   String? _error;
 
-DetailsData copyWith({  String? title,
-  String? year,
-  String? rated,
-  String? released,
-  String? runtime,
-  String? genre,
-  String? director,
-  String? writer,
-  String? actors,
-  String? plot,
-  String? language,
-  String? country,
-  String? awards,
-  String? poster,
-  List<Ratings>? ratings,
-  String? metascore,
-  String? imdbRating,
-  String? imdbVotes,
-  String? imdbID,
-  String? type,
-  String? totalSeasons,
-  String? response,
-  String? error,
-}) => DetailsData(  title: title ?? _title,
-  year: year ?? _year,
-  rated: rated ?? _rated,
-  released: released ?? _released,
-  runtime: runtime ?? _runtime,
-  genre: genre ?? _genre,
-  director: director ?? _director,
-  writer: writer ?? _writer,
-  actors: actors ?? _actors,
-  plot: plot ?? _plot,
-  language: language ?? _language,
-  country: country ?? _country,
-  awards: awards ?? _awards,
-  poster: poster ?? _poster,
-  ratings: ratings ?? _ratings,
-  metascore: metascore ?? _metascore,
-  imdbRating: imdbRating ?? _imdbRating,
-  imdbVotes: imdbVotes ?? _imdbVotes,
-  imdbID: imdbID ?? _imdbID,
-  type: type ?? _type,
-  totalSeasons: totalSeasons ?? _totalSeasons,
-  response: response ?? _response,
-  error: error ?? _error,
-);
+  DetailsData copyWith({
+    String? title,
+    String? year,
+    String? rated,
+    String? released,
+    String? runtime,
+    String? genre,
+    String? director,
+    String? writer,
+    String? actors,
+    String? plot,
+    String? language,
+    String? country,
+    String? awards,
+    String? poster,
+    List<Ratings>? ratings,
+    String? metascore,
+    String? imdbRating,
+    String? imdbVotes,
+    String? imdbID,
+    String? type,
+    String? totalSeasons,
+    String? response,
+    String? error,
+  }) =>
+      DetailsData(
+        title: title ?? _title,
+        year: year ?? _year,
+        rated: rated ?? _rated,
+        released: released ?? _released,
+        runtime: runtime ?? _runtime,
+        genre: genre ?? _genre,
+        director: director ?? _director,
+        writer: writer ?? _writer,
+        actors: actors ?? _actors,
+        plot: plot ?? _plot,
+        language: language ?? _language,
+        country: country ?? _country,
+        awards: awards ?? _awards,
+        poster: poster ?? _poster,
+        ratings: ratings ?? _ratings,
+        metascore: metascore ?? _metascore,
+        imdbRating: imdbRating ?? _imdbRating,
+        imdbVotes: imdbVotes ?? _imdbVotes,
+        imdbID: imdbID ?? _imdbID,
+        type: type ?? _type,
+        totalSeasons: totalSeasons ?? _totalSeasons,
+        response: response ?? _response,
+        error: error ?? _error,
+      );
   String? get title => _title;
   String? get year => _year;
   String? get rated => _rated;
@@ -208,18 +213,19 @@ DetailsData copyWith({  String? title,
     map['Error'] = _error;
     return map;
   }
-
 }
 
 Ratings ratingsFromJson(String str) => Ratings.fromJson(json.decode(str));
 String ratingsToJson(Ratings data) => json.encode(data.toJson());
+
 class Ratings {
   Ratings({
-      String? source, 
-      String? value,}){
+    String? source,
+    String? value,
+  }) {
     _source = source;
     _value = value;
-}
+  }
 
   Ratings.fromJson(dynamic json) {
     _source = json['Source'];
@@ -227,11 +233,14 @@ class Ratings {
   }
   String? _source;
   String? _value;
-Ratings copyWith({  String? source,
-  String? value,
-}) => Ratings(  source: source ?? _source,
-  value: value ?? _value,
-);
+  Ratings copyWith({
+    String? source,
+    String? value,
+  }) =>
+      Ratings(
+        source: source ?? _source,
+        value: value ?? _value,
+      );
   String? get source => _source;
   String? get value => _value;
 
@@ -241,5 +250,4 @@ Ratings copyWith({  String? source,
     map['Value'] = _value;
     return map;
   }
-
 }

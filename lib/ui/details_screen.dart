@@ -225,7 +225,7 @@ class DetailScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 8),
               child: Image(
-                  image: rottenImage(score),
+                image: rottenImage(score),
                 width: 32,
                 height: 32,
                 fit: BoxFit.scaleDown,
