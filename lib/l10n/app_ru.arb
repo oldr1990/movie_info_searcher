@@ -1,4 +1,5 @@
 {
-  "title": "Rainbow Generator",
-  "welcome_message": "Hello there"
+  "title": "Movie Info Searcher",
+  "welcome_message": "Hello there",
+  "unexpected_error": "Unexpected Error"
 }

@@ -1,47 +1,37 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
-
-import 'package:http/http.dart';
+import 'package:movie_info_searcher/data/models/details_data.dart';
+import 'package:movie_info_searcher/data/models/omdbi_response.dart';
 import 'package:movie_info_searcher/data/models/search_data.dart';
+import 'package:movie_info_searcher/network/mock/request_result.dart';
 import 'package:movie_info_searcher/network/model_response.dart';
-
 
 const String baseUrl = "http://www.omdbapi.com/";
 const String apiKey = "830086";
 
-class OmdbiService {
-  Future<Result<String>> getData(String url) async {
-    try {
-      final response = await get(Uri.parse(url));
-      if (response.statusCode == 200 || response.statusCode == 401) {
-        log(response.body);
-        return Success(response.body);
-      } else {
-        log(response.statusCode.toString());
-        return Error("Unexpected error!");
-      }
-    } on SocketException {
-      return Error("Please, check your internet connection and try again.");
-    }  on TimeoutException {
-      return Error( "Server not responding!");
-    } catch (e) {
-      return Error("Unknown error occupied!");
-    }
-  }
+abstract class OmdbiRepository {
+  const OmdbiRepository();
+  Future<Result<OmdbiResponse>> searchMovies(SearchData data);
 
-  Future<Result<String>> searchMovies(SearchData data) async {
+  Future<Result<DetailsData>> getDetails(String id);
+}
+
+class OmdbiRepositoryImpl extends OmdbiRepository {
+  const OmdbiRepositoryImpl();
+  @override
+  Future<Result<OmdbiResponse>> searchMovies(SearchData data) async {
     String typeString = getType(data.type);
     final request =
         '$baseUrl?apikey=$apiKey&s=${data.search}&y=${data.year}&type=$typeString&page=${data.page.toString()}';
     log(request);
-    final movies = await getData(request);
-    return movies;
+    return await requestResult(request, (p0) => OmdbiResponse.fromJson(p0));
   }
 
-  Future<Result<String>> getDetails(String id) async {
+  @override
+  Future<Result<DetailsData>> getDetails(String id) async {
     log("$baseUrl?apikey=$apiKey&i=$id");
-    return await getData("$baseUrl?apikey=$apiKey&i=$id");
+    return await requestResult(
+        "$baseUrl?apikey=$apiKey&i=$id", (i) => DetailsData.fromJson(i));
   }
 
   String getType(TypeOfMovie? type) {

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +16,13 @@ part 'searching_event.dart';
 part 'searching_state.dart';
 
 class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
-  final BuildContext context;
-  SearchingBloc({required this.context}) : super(const SearchingState()) {
+  final OmdbiRepository repository;
+  bool _isLoadingMore = false;
+  int _page = 0;
+  List<Search> _list = [];
+
+  SearchingBloc({this.repository = const OmdbiRepositoryImpl()})
+      : super(SearchingState()) {
     on<SearchMore>(_onSearchMore, transformer: (events, mapper) {
       return events
           .debounce(const Duration(milliseconds: 300))
@@ -32,90 +36,63 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
     });
   }
 
-  SearchData searchData = const SearchData();
-  bool isEnd = false;
-
   Future<void> _onSearchMore(
       SearchMore event, Emitter<SearchingState> emit) async {
-    if (state.hasReachedMax) return;
-    try {
-      final loadedList = await _searchMovies();
-      return emit(state.copyWith(
-          status: SearchStatus.success,
-          list: state.list + loadedList,
-          hasReachedMax: isEnd));
-    } catch (e) {
-       searchData = const SearchData();
-       emit(state.copyWith(status: SearchStatus.failure, error: e.toString()));
-       emit(state.copyWith(status: SearchStatus.success, hasReachedMax: true));
+    if (_isLoadingMore || state.hasReachedMax) {
+      return;
     }
+    _page++;
+    _isLoadingMore = true;
+    final result = await repository.searchMovies(event.data);
+    if (result is Success<OmdbiResponse>) {
+      final data = result.value;
+      _list += data.search;
+      emit(state.copyWith(
+          list: _list, hasReachedMax: isEnd(data.totalResults ?? '0')));
+    } else if (result is Error<OmdbiResponse>) {
+      emit(ErrorAction(result.errorMessage));
+      emit(state.copyWith(hasReachedMax: true));
+    }
+    _isLoadingMore = false;
   }
 
   Future<void> _onInitialSearch(
       SearchInitial event, Emitter<SearchingState> emit) async {
-    emit(state.copyWith(status: SearchStatus.loading));
-    isEnd = false;
-    searchData = event.data;
-    try {
-      final loadedList = await _searchMovies();
-      return emit(state.copyWith(
-          status: SearchStatus.success,
-          list: loadedList,
-          hasReachedMax: isEnd));
-    } catch (e) {
-      searchData = const SearchData();
-      emit(state.copyWith(status: SearchStatus.failure, error: e.toString()));
+    _page = 1;
+    _list = [];
+    emit(Loading(true));
+    final result = await repository.searchMovies(event.data);
+    if (result is Success<OmdbiResponse>) {
+      _list = result.value.search;
+      emit(state.copyWith(
+          list: _list, hasReachedMax: isEnd(result.value.totalResults ?? '0')));
+    } else if (result is Error<OmdbiResponse>) {
+      emit(ErrorAction(result.errorMessage));
     }
+    emit(Loading(false));
   }
 
-  Future<List<Search>> _searchMovies() async {
-    final result = await OmdbiService().searchMovies(searchData);
-    if (result is Error<String>) {
-      throw result.errorMessage;
-    }
-    result as Success<String>;
-    final jsonMap = jsonDecode(result.value);
-    OmdbiResponse response = OmdbiResponse.fromJson(jsonMap);
-    if (response.response == "True") {
-      isEnd = checkEnd(response.totalResults!);
-      return response.search;
-    } else {
-      throw response.error ?? "Unexpected error.";
-    }
-  }
-
-  bool checkEnd(String pagesStr) {
-    searchData = searchData.copyWith(page: searchData.page + 1);
+  bool isEnd(String pagesStr) {
     int allMovies = int.tryParse(pagesStr) ?? 0;
     int pages = allMovies ~/ 10;
     if (allMovies % 10 != 0) pages++;
     if (pages > 10) pages = 10;
-    return pages <= searchData.page;
-  }
-
-  Future<DetailsData> _searchDetails(String id) async {
-    final result = await OmdbiService().getDetails(id);
-    if (result is Error<String>) {
-      throw result.errorMessage;
-    }
-    result as Success<String>;
-    final details = DetailsData.fromJson(jsonDecode(result.value));
-    if (details.response == "True") {
-      return details;
-    } else {
-      throw details.error ?? "Unexpected error.";
-    }
+    return pages <= _page;
   }
 
   FutureOr<void> _getDetails(
       GetDetails event, Emitter<SearchingState> emit) async {
-    emit(state.copyWith(status: SearchStatus.loading));
-    try {
-      final details = await _searchDetails(event.movieId);
-      Navigator.pushNamed(context, DetailScreen.route, arguments: details);
-      emit(state.copyWith(status: SearchStatus.success));
-    } catch (e) {
-      emit(state.copyWith(status: SearchStatus.failure, error: e.toString()));
+    emit(Loading(true));
+    final result = await repository.getDetails(event.movieId);
+    if (result is Success<DetailsData>) {
+      if (result.value.response == "True") {
+        emit(Navigate(route: DetailScreen.route, data: result.value));
+      } else {
+        emit(ErrorAction("Unexpected error."));
+      }
+    } else if (result is Error<DetailsData>) {
+      emit(ErrorAction(result.errorMessage));
     }
+    emit(Loading(false));
   }
 }

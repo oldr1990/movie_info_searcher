@@ -129,7 +129,7 @@ class DetailScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Text(
                 data.plot!,
-                style: MovieInfoSercherTheme.darkTextTheme.headline3,
+                style: MovieInfoSercherTheme.darkTextTheme.displaySmall,
                 textAlign: TextAlign.justify,
               )),
         ),
@@ -184,7 +184,7 @@ class DetailScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
             child: Text(
               "IMDb",
-              style: MovieInfoSercherTheme.lightTextTheme.headline2,
+              style: MovieInfoSercherTheme.lightTextTheme.displayMedium,
             ),
           ),
         ),
@@ -200,7 +200,7 @@ class DetailScreen extends StatelessWidget {
             ),
             Text(
               rating.value!,
-              style: MovieInfoSercherTheme.darkTextTheme.headline2,
+              style: MovieInfoSercherTheme.darkTextTheme.displayMedium,
             )
           ],
         )
@@ -217,7 +217,7 @@ class DetailScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
           child: Text(
             "Rotten Tomatoes",
-            style: MovieInfoSercherTheme.darkTextTheme.headline6,
+            style: MovieInfoSercherTheme.darkTextTheme.titleLarge,
           ),
         ),
         Row(
@@ -266,7 +266,7 @@ class DetailScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 4.0),
                 child: Text(
                   "metacritic",
-                  style: MovieInfoSercherTheme.darkTextTheme.headline2,
+                  style: MovieInfoSercherTheme.darkTextTheme.displayMedium,
                 ),
               )
             ],
@@ -281,7 +281,7 @@ class DetailScreen extends StatelessWidget {
               child: Center(
                 child: Text(
                   number.toString(),
-                  style: MovieInfoSercherTheme.darkTextTheme.headline2,
+                  style: MovieInfoSercherTheme.darkTextTheme.displayMedium,
                 ),
               ),
             ),
