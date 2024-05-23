@@ -27,7 +27,7 @@ jobs:
         if: always()
         with:
           status: ${{ job.status }}
-          notification_title: "{workflow} ${actor}  {actor} ${{ actor }} has {status_message}"
+          notification_title: "{workflow} $actor has {status_message}"
           message_format: "{emoji} *{workflow}* {status_message} in <{branch_url}|{branch}>"
           footer: "Linked Repo <{repo_url}|{repo}>"
           notify_when: "failure"
