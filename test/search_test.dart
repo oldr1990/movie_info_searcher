@@ -44,5 +44,13 @@ void main() {
         expect(b.list.length, same(3));
       },
     );
+    blocTest<SearchingBloc, SearchingState>(
+      'load list',
+      build: () => bloc,
+      act: (b) => b.add(SearchMore(const SearchData(search: 'one'))),
+      verify: (b) {
+        expect(b.list.length, same(3));
+      },
+    );
   });
 }
