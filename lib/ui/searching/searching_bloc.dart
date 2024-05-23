@@ -19,7 +19,7 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
   final OmdbiRepository repository;
   bool _isLoadingMore = false;
   int _page = 0;
-  List<Search> _list = [];
+  List<Search> list = [];
 
   SearchingBloc({this.repository = const OmdbiRepositoryImpl()})
       : super(SearchingState()) {
@@ -46,9 +46,9 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
     final result = await repository.searchMovies(event.data);
     if (result is Success<OmdbiResponse>) {
       final data = result.value;
-      _list += data.search;
+      list += data.search;
       emit(state.copyWith(
-          list: _list, hasReachedMax: isEnd(data.totalResults ?? '0')));
+          list: list, hasReachedMax: isEnd(data.totalResults ?? '0')));
     } else if (result is Error<OmdbiResponse>) {
       emit(ErrorAction(result.errorMessage));
       emit(state.copyWith(hasReachedMax: true));
@@ -59,13 +59,13 @@ class SearchingBloc extends Bloc<SearchingEvent, SearchingState> {
   Future<void> _onInitialSearch(
       SearchInitial event, Emitter<SearchingState> emit) async {
     _page = 1;
-    _list = [];
+    list = [];
     emit(Loading(true));
     final result = await repository.searchMovies(event.data);
     if (result is Success<OmdbiResponse>) {
-      _list = result.value.search;
+      list = result.value.search;
       emit(state.copyWith(
-          list: _list, hasReachedMax: isEnd(result.value.totalResults ?? '0')));
+          list: list, hasReachedMax: isEnd(result.value.totalResults ?? '0')));
     } else if (result is Error<OmdbiResponse>) {
       emit(ErrorAction(result.errorMessage));
     }
