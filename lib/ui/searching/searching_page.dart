@@ -3,12 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:movie_info_searcher/ui/searching/searching_bloc.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../data/models/omdbi_response.dart';
+import '../../data/models/search_data.dart';
 import '../components/movie_card.dart';
 import '../components/searching_card.dart';
 
 class SearchingPage extends StatefulWidget {
   static const String route = "/searching";
+
   const SearchingPage({Key? key}) : super(key: key);
 
   @override
@@ -18,6 +21,7 @@ class SearchingPage extends StatefulWidget {
 class _SearchingPageState extends State<SearchingPage> {
   bool _showScrollUpButton = false;
   final _scrollController = ScrollController();
+  SearchData searchData = const SearchData();
 
   @override
   void dispose() {
@@ -36,7 +40,7 @@ class _SearchingPageState extends State<SearchingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Movie Info Searcher')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.title)),
       body: _buildBody(),
       floatingActionButton: _showScrollUpButton
           ? FloatingActionButton(
@@ -70,7 +74,10 @@ class _SearchingPageState extends State<SearchingPage> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<SearchingBloc>().add(SearchMore());
+    if (_isBottom) {
+      searchData = searchData.copyWith(page: searchData.page + 1);
+      context.read<SearchingBloc>().add(SearchMore(searchData));
+    }
     bool isScrolled = _scrollController.offset >= 400;
     if (isScrolled != _showScrollUpButton) {
       setState(() {
@@ -100,11 +107,9 @@ class _SearchingPageState extends State<SearchingPage> {
   }
 
   void showError(BuildContext newContext, String? message) async {
-    //give time to build ui
-    await Future.delayed(const Duration(milliseconds: 10));
     ScaffoldMessenger.of(newContext).showSnackBar(SnackBar(
       content: Text(
-        message ?? "Unexpected Error",
+        message ?? AppLocalizations.of(newContext)!.unexpected_error,
         style: const TextStyle(color: Colors.white, fontSize: 20),
       ),
       backgroundColor: Colors.black38,
@@ -118,17 +123,28 @@ class _SearchingPageState extends State<SearchingPage> {
   }
 
   Widget _buildBody() {
-    return BlocBuilder<SearchingBloc, SearchingState>(
+    return BlocConsumer<SearchingBloc, SearchingState>(
       builder: (context, state) {
-        if (state.status == SearchStatus.loading) {
-          context.loaderOverlay.show();
-        } else {
-          context.loaderOverlay.hide();
-        }
-        if (state.status == SearchStatus.failure) {
-          showError(context, state.error);
-        }
         return _buildMainList(state.list, state.hasReachedMax);
+      },
+      listenWhen: (context, state) {
+        return state is NotifAction;
+      },
+      buildWhen: (context, state) {
+        return state is! NotifAction;
+      },
+      listener: (context, action) {
+        if (action is Loading) {
+          if (action.isLoading) {
+            context.loaderOverlay.show();
+          } else {
+            context.loaderOverlay.hide();
+          }
+        } else if (action is Navigate) {
+          Navigator.pushNamed(context, action.route, arguments: action.data);
+        } else if (action is ErrorAction) {
+          showError(context, action.message);
+        }
       },
     );
   }
@@ -139,13 +155,11 @@ class _SearchingPageState extends State<SearchingPage> {
         itemCount: list.isEmpty ? 1 : list.length + (isEnd ? 0 : 1),
         itemBuilder: ((context, index) {
           if (index == 0) {
-            return SearchingCard(
-              onSearch: (data) {
-                FocusScope.of(context).unfocus();
-                context.read<SearchingBloc>().add(SearchInitial(data: data));
-              },
-              searchData: context.read<SearchingBloc>().searchData,
-            );
+            return SearchingCard(onSearch: (data) {
+              FocusScope.of(context).unfocus();
+              searchData = data;
+              context.read<SearchingBloc>().add(SearchInitial(data: data));
+            });
           } else if (index < list.length) {
             return movieCard(list[index], (item) {
               FocusScope.of(context).unfocus();

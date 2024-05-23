@@ -7,7 +7,7 @@ class OmdbiResponse {
 
   OmdbiResponse({
     this.search = const [],
-    this.totalResults = "",
+    this.totalResults = "0",
     required this.response,
     this.error,
   });
@@ -21,7 +21,7 @@ class OmdbiResponse {
     }
     return OmdbiResponse(
         search: searchList,
-        totalResults: json['totalResults'] ?? "",
+        totalResults: json['totalResults'] ?? "0",
         response: json['Response'] ?? "",
         error: json['Error']);
   }

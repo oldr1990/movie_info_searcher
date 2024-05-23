@@ -1,32 +1,41 @@
 part of 'searching_bloc.dart';
 
-enum SearchStatus { initial, success, failure, loading }
+enum SearchStatus { initial, success, failure }
 
 class SearchingState {
-  final SearchStatus status;
   final List<Search> list;
   final bool hasReachedMax;
-  final DetailsData? details;
-  final String error;
 
-  const SearchingState(
-      {this.status = SearchStatus.initial,
-      this.list = const <Search>[],
-      this.hasReachedMax = false,
-      this.details,
-      this.error = ''});
+  SearchingState({this.list = const <Search>[], this.hasReachedMax = false});
 
-  SearchingState copyWith(
-      {SearchStatus? status,
-      List<Search>? list,
-      bool? hasReachedMax,
-      DetailsData? details,
-      String? error}) {
+  SearchingState copyWith({
+    List<Search>? list,
+    bool? hasReachedMax,
+  }) {
     return SearchingState(
-        status: status ?? this.status,
-        list: list ?? this.list,
-        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
-        details: details ?? this.details,
-        error: error ?? this.error);
+      list: list ?? this.list,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+    );
   }
+}
+
+sealed class NotifAction extends SearchingState {}
+
+class Loading extends NotifAction {
+  final bool isLoading;
+
+  Loading(this.isLoading);
+}
+
+class Navigate extends NotifAction {
+  final String route;
+  final Object? data;
+
+  Navigate({required this.route, this.data});
+}
+
+class ErrorAction extends NotifAction {
+  final String message;
+
+  ErrorAction(this.message);
 }

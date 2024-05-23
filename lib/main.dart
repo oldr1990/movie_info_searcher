@@ -4,6 +4,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:movie_info_searcher/navigation.dart';
 import 'package:movie_info_searcher/ui/searching/searching_page.dart';
 import 'package:movie_info_searcher/ui/theme.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() => runApp(const MyApp());
 
@@ -30,6 +31,8 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         initialRoute: SearchingPage.route,
         onGenerateRoute: navigator,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: MovieInfoSercherTheme.dark(),
         title: "Movie Info Searcher",
       ),

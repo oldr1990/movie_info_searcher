@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_info_searcher/data/models/search_data.dart';
@@ -5,8 +6,7 @@ import 'package:movie_info_searcher/ui/theme.dart';
 
 class SearchingCard extends StatefulWidget {
   final Function(SearchData) onSearch;
-  final SearchData searchData;
-  const SearchingCard({Key? key, required this.onSearch, required this.searchData}) : super(key: key);
+  const SearchingCard({Key? key, required this.onSearch}) : super(key: key);
 
   @override
   State<SearchingCard> createState() => _SearchingCardState();
@@ -22,9 +22,6 @@ class _SearchingCardState extends State<SearchingCard> {
   @override
   void initState() {
     super.initState();
-    _searchController.text = widget.searchData.search;
-    _yearController.text = widget.searchData.year ?? "";
-    _type = widget.searchData.type ?? TypeOfMovie.all;
     _yearController.addListener(() {
       if (_yearController.text.length == 4) {
         setState(() => _invalidYear = isYearNotValidated(_yearController.text));
@@ -113,7 +110,7 @@ class _SearchingCardState extends State<SearchingCard> {
                       MaterialStateProperty.all<Color>(Colors.black12)),
               child: Text(
                 "Search",
-                style: MovieInfoSercherTheme.darkTextTheme.headline2,
+                style: MovieInfoSercherTheme.darkTextTheme.displayMedium,
               ),
               onPressed: () async {
                 if(_searchController.text.isEmpty){
@@ -158,53 +155,68 @@ class _SearchingCardState extends State<SearchingCard> {
   }
 
   Widget buildTypeChips() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Wrap(
+      spacing: 16,
+      alignment: WrapAlignment.start,
+      runAlignment: WrapAlignment.start,
+      crossAxisAlignment: WrapCrossAlignment.start,
       children: [
-        ChoiceChip(
-          selectedColor: Colors.black,
-          selected: _type == TypeOfMovie.all,
-          label: const Text(
-            'all types',
-            style: TextStyle(color: Colors.white),
+        Flexible(
+          child: ChoiceChip(
+            selectedColor: Colors.black,
+            selected: _type == TypeOfMovie.all,
+            label: const Text(
+              'all types',
+              style: TextStyle(color: Colors.white),
+            ),
+            onSelected: (selected) {
+              setState(() => _type = TypeOfMovie.all);
+            },
           ),
-          onSelected: (selected) {
-            setState(() => _type = TypeOfMovie.all);
-          },
         ),
-        ChoiceChip(
-          selectedColor: Colors.black,
-          selected: _type == TypeOfMovie.movies,
-          label: const Text(
-            'movies',
-            style: TextStyle(color: Colors.white),
+        const Spacer(),
+        Flexible(
+          child: ChoiceChip(
+            selectedColor: Colors.black,
+            selected: _type == TypeOfMovie.movies,
+            label: const Text(
+              'movies',
+              style: TextStyle(color: Colors.white),
+            ),
+            onSelected: (selected) {
+              setState(() => _type = TypeOfMovie.movies);
+            },
           ),
-          onSelected: (selected) {
-            setState(() => _type = TypeOfMovie.movies);
-          },
         ),
-        ChoiceChip(
-          selectedColor: Colors.black,
-          selected: _type == TypeOfMovie.series,
-          label: const Text(
-            'series',
-            style: TextStyle(color: Colors.white),
+        const Spacer(),
+        Flexible(
+          child: ChoiceChip(
+            selectedColor: Colors.black,
+            selected: _type == TypeOfMovie.series,
+            label: const Text(
+              'series',
+              style: TextStyle(color: Colors.white),
+            ),
+            onSelected: (selected) {
+              setState(() => _type = TypeOfMovie.series);
+            },
           ),
-          onSelected: (selected) {
-            setState(() => _type = TypeOfMovie.series);
-          },
         ),
-        ChoiceChip(
-          selectedColor: Colors.black,
-          selected: _type == TypeOfMovie.episode,
-          label: const Text(
-            'episode',
-            style: TextStyle(color: Colors.white),
+        const Spacer(),
+        Flexible(
+          child: ChoiceChip(
+            selectedColor: Colors.black,
+            selected: _type == TypeOfMovie.episode,
+            label: const Text(
+              'episode',
+              style: TextStyle(color: Colors.white),
+            ),
+            onSelected: (selected) {
+              setState(() => _type = TypeOfMovie.episode);
+            },
           ),
-          onSelected: (selected) {
-            setState(() => _type = TypeOfMovie.episode);
-          },
         ),
+        const Spacer(),
       ],
     );
   }

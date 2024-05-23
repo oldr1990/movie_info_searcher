@@ -10,7 +10,7 @@ Route<dynamic>? Function(RouteSettings)? navigator = (settings) {
   if (settings.name == SearchingPage.route) {
     return MaterialPageRoute(builder: (context) {
       return BlocProvider(
-        create: (_) => SearchingBloc(context: context),
+        create: (_) => SearchingBloc(),
         child: const SearchingPage(),
       );
     });

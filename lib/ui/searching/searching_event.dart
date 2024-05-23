@@ -6,7 +6,11 @@ abstract class SearchingEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class SearchMore extends SearchingEvent {}
+class SearchMore extends SearchingEvent {
+  final SearchData data;
+
+  SearchMore(this.data);
+}
 
 class SearchInitial extends SearchingEvent {
   final SearchData data;

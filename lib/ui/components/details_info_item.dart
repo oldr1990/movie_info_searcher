@@ -11,12 +11,12 @@ Widget detailsInfoItem(DetailsInfoItemData item) {
           width: 100,
           child: Text(
             item.description,
-            style: MovieInfoSercherTheme.darkTextTheme.headline3,
+            style: MovieInfoSercherTheme.darkTextTheme.displaySmall,
           )),
       Flexible(
         child: Text(
           item.value,
-          style: MovieInfoSercherTheme.darkTextTheme.headline3,
+          style: MovieInfoSercherTheme.darkTextTheme.displaySmall,
             textAlign: TextAlign.left,
         ),
       ),

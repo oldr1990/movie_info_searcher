@@ -35,7 +35,7 @@ Widget movieCard(Search item, Function(String) onItemTap) {
                           child: Text(
                             item.title,
                             style:
-                                MovieInfoSercherTheme.darkTextTheme.headline2,
+                                MovieInfoSercherTheme.darkTextTheme.displayMedium,
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -47,7 +47,7 @@ Widget movieCard(Search item, Function(String) onItemTap) {
                               child: Text(
                                 item.year,
                                 style: MovieInfoSercherTheme
-                                    .darkTextTheme.headline2,
+                                    .darkTextTheme.displayMedium,
                               ),
                             ),
                             Hero(
@@ -55,7 +55,7 @@ Widget movieCard(Search item, Function(String) onItemTap) {
                               child: Text(
                                 item.type,
                                 style: MovieInfoSercherTheme
-                                    .darkTextTheme.headline2,
+                                    .darkTextTheme.displayMedium,
                               ),
                             ),
                           ],
