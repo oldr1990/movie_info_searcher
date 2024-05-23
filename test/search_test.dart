@@ -39,7 +39,7 @@ void main() {
     blocTest<SearchingBloc, SearchingState>(
       'load list',
       build: () => bloc,
-      act: (b) => b.add(SearchInitial(data: SearchData(search: 'one'))),
+      act: (b) => b.add(SearchInitial(data: const SearchData(search: 'one'))),
       verify: (b) {
         expect(b.list.length, same(3));
       },
