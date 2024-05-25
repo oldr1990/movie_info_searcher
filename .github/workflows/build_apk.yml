@@ -33,7 +33,7 @@ jobs:
         with:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channels: ${{ secrets.SLACK_CHANNEL_ID }}
-          file_path: ${{ github.workspace }}/app/actions_builds/app-release.apk
+          file_path: 'build/app/outputs/apk/release/app-release.apk'
           file_name: 'app-release.apk'
           file_type: 'apk'
           initial_comment: '${{ github.ref }} - deployed the apk file to slack'
