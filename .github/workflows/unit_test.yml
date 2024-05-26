@@ -1,4 +1,4 @@
-name: Unit Test
+name: Unit Tests
 
 on:
   push:
@@ -29,12 +29,9 @@ jobs:
         if: always()
         with:
           status: ${{ job.status }}
-          notification_title: "{workflow} ${{ github.actor }} has {status_message}"
-          message_format: "{emoji} *{workflow}* {status_message} in <{run_url}| Check log>"
+          notification_title: "{workflow} has {status_message}"
+          message_format: "${emoji} {{ github.actor }}'s pull request {status_message}.  *{workflow}* in <{run_url}| Look a job on the GitHub>"
           footer: "Linked Repo <{repo_url}|{repo}>"
           notify_when: "failure"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      - name: Upload coverage to codecov
-        run: curl -s https://codecov.io/bash
-        shell: bash
